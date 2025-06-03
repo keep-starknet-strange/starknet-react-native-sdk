@@ -89,7 +89,7 @@ jobs:
 
       - name: Create Release Archive
         run: |
-          npm pack
+          yarn pack
           mv *.tgz starknet-react-native-sdk-${{ needs.release.outputs.release-version }}.tgz
 
       - name: Generate Release Notes
