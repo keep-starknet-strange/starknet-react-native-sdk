@@ -4,35 +4,82 @@ Thank you for your interest in contributing to the Starknet React Native SDK! Th
 
 ## Development Setup
 
-### Prerequisites
+1. **Prerequisites**
+   - Node.js 18.x - 22.x (see [Node Version Management](#node-version-management) below)
+   - Yarn 3.6.1+ (managed via Corepack)
+   - Git
 
-- Node.js 18+ 
-- Yarn package manager
-- React Native development environment (for testing)
-- iOS Simulator and/or Android Emulator
-
-### Getting Started
-
-1. **Fork and Clone**
+2. **Clone and Setup**
    ```bash
-   git clone https://github.com/your-username/starknet-react-native-sdk.git
+   git clone https://github.com/keep-starknet-strange/starknet-react-native-sdk.git
    cd starknet-react-native-sdk
-   ```
-
-2. **Install Dependencies**
-   ```bash
+   
+   # Ensure correct Node version
+   nvm use  # reads from .nvmrc (Node 20)
+   
+   # Install dependencies
    yarn install
-   ```
-
-3. **Run Tests**
-   ```bash
+   
+   # Build the SDK
+   yarn build
+   
+   # Run tests
    yarn test
    ```
 
-4. **Build the SDK**
-   ```bash
-   yarn build
-   ```
+### Node Version Management
+
+This project requires **Node.js 18.x - 22.x** due to Docusaurus compatibility:
+
+```bash
+# Install Node Version Manager (if not already installed)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Use project's specified Node version (Node 20)
+nvm use
+
+# If you don't have Node 20 installed
+nvm install 20
+nvm use 20
+```
+
+**⚠️ Important**: Node.js v23+ is **not supported** due to Docusaurus compatibility issues.
+
+## Troubleshooting
+
+### Documentation Build Issues
+
+**Problem**: Getting `chalk_1.default.yellow is not a function` error when building documentation.
+
+**Cause**: You're using Node.js v23+ which is incompatible with Docusaurus.
+
+**Solution**:
+```bash
+# Check your Node version
+node --version
+
+# If using Node v23+, switch to Node 20
+nvm use 20
+
+# Clean and rebuild
+cd docs
+rm -rf node_modules .docusaurus
+cd ..
+yarn install
+cd docs && yarn build
+```
+
+### Dependency Issues
+
+**Problem**: Yarn workspace resolution errors or missing dependencies.
+
+**Solution**:
+```bash
+# Clean workspace and reinstall
+yarn cache clean
+rm -rf node_modules docs/node_modules
+yarn install
+```
 
 ## Project Structure
 

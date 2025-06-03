@@ -75,6 +75,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
+    "@docusaurus/faster": "^3.8.0",
     "@walletconnect/types": "^2.13.0",
     "@walletconnect/utils": "^2.13.0",
     "@walletconnect/web3wallet": "^1.12.0",

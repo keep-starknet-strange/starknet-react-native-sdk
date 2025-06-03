@@ -51,14 +51,14 @@ jobs:
 
       - name: Generate API documentation
         run: |
-          echo "Checking TypeScript and dependencies..."
-          yarn typecheck
           echo "Generating API documentation..."
-          yarn docs:generate || (echo "TypeDoc failed, but continuing..." && mkdir -p docs/static/api && echo "API documentation generation failed" > docs/static/api/README.md)
+          yarn docs:generate
 
       - name: Build documentation
         working-directory: docs
-        run: yarn build
+        run: |
+          echo "Building Docusaurus documentation..."
+          yarn build
 
       - name: Upload documentation artifacts
         uses: actions/upload-artifact@v4

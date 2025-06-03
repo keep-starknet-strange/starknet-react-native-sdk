@@ -151,11 +151,26 @@ const customConfig = {
 
 🟢 **CI Pipeline**: All workflows passing  
 🟢 **Build & Test**: Working correctly  
-�� **Documentation**: Restored with Node.js 18-22 requirement  
+🟢 **Documentation**: ✅ Deployed via CI (⚠️ Local build requires Node 18-22)  
 🟡 **Release**: Temporarily disabled due to dependency conflicts  
 
-### Known Issues
-- **Node.js v23 Compatibility**: Docusaurus 3.8.0 doesn't support Node.js v23+ (use Node 18-22)
+### Known Issues & Solutions
+
+#### 📖 Documentation Build (Local Development)
+- **Issue**: Docusaurus 3.x doesn't support Node.js v23+ 
+- **Error**: `chalk_1.default.yellow is not a function`
+- **Solution**: Use Node.js 18-22 for local development
+  ```bash
+  # Install and use Node 20 (recommended)
+  nvm install 20
+  nvm use 20
+  
+  # Then build documentation
+  cd docs && yarn build
+  ```
+- **CI Status**: ✅ Working (uses Node.js 20.x automatically)
+
+#### 🔧 Other Known Issues
 - **Release Tools**: CLI dependency conflicts with Yarn PnP resolution
 - **Security**: GitHub reports 5 vulnerabilities (production dependencies are clean)
 
