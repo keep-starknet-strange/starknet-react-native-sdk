@@ -50,15 +50,7 @@ jobs:
         run: yarn build
 
       - name: Generate API documentation
-        run: |
-          npx typedoc src/index.ts \
-            --out docs/static/api \
-            --theme default \
-            --name "Starknet React Native SDK API" \
-            --readme none \
-            --excludePrivate \
-            --excludeInternal \
-            --hideGenerator
+        run: yarn docs:generate
 
       - name: Build documentation
         working-directory: docs

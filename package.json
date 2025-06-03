@@ -36,7 +36,7 @@
     "pods": "cd example && pod-install --quiet",
     "dev:android": "yarn example android",
     "dev:ios": "yarn example ios",
-    "docs:generate": "typedoc",
+    "docs:generate": "typedoc --options typedoc.json",
     "docs:dev": "cd docs && yarn start",
     "docs:build": "cd docs && yarn build",
     "docs:serve": "cd docs && yarn serve",
@@ -159,15 +159,5 @@
         "infile": "CHANGELOG.md"
       }
     }
-  },
-  "typedoc": {
-    "entryPoint": "src/index.ts",
-    "out": "docs/static/api",
-    "theme": "default",
-    "name": "Starknet React Native SDK API",
-    "excludePrivate": true,
-    "excludeInternal": true,
-    "hideGenerator": true,
-    "readme": "none"
   }
 }
