@@ -39,6 +39,9 @@ jobs:
       - name: Setup Yarn version
         run: corepack prepare yarn@3.6.1 --activate
 
+      - name: Clean Yarn cache
+        run: yarn cache clean --all
+
       - name: Install dependencies
         run: yarn install --immutable
 
@@ -57,6 +60,10 @@ jobs:
       - name: Build documentation
         working-directory: docs
         run: |
+          echo "Node version:"
+          node --version
+          echo "Yarn version:"
+          yarn --version
           echo "Building Docusaurus documentation..."
           yarn build
 
