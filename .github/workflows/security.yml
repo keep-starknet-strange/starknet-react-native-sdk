@@ -88,17 +88,17 @@ jobs:
       - name: Run security audit (Production dependencies)
         run: |
           echo "Running security audit for production dependencies..."
-          yarn npm audit --environment production --json > audit-prod.json || true
+          yarn npm audit --all --environment production --json > audit-prod.json || true
           
       - name: Run security audit (All dependencies)
         run: |
           echo "Running security audit for all dependencies..."
           yarn npm audit --all --json > audit-all.json || true
           
-      - name: Run security audit (Recursive - transitive dependencies)
+      - name: Run security audit (All workspaces - comprehensive)
         run: |
-          echo "Running security audit for transitive dependencies..."
-          yarn npm audit --recursive --json > audit-recursive.json || true
+          echo "Running comprehensive security audit..."
+          yarn npm audit --all --severity moderate --json > audit-comprehensive.json || true
 
       - name: Process audit results
         run: |
@@ -118,12 +118,12 @@ jobs:
             echo "Critical: $ALL_CRITICAL, High: $ALL_HIGH, Moderate: $ALL_MODERATE"
           fi
           
-          echo "=== Recursive Dependencies Audit ==="
-          if [ -f "audit-recursive.json" ]; then
-            REC_CRITICAL=$(cat audit-recursive.json | jq -r '.metadata.vulnerabilities.critical // 0')
-            REC_HIGH=$(cat audit-recursive.json | jq -r '.metadata.vulnerabilities.high // 0')
-            REC_MODERATE=$(cat audit-recursive.json | jq -r '.metadata.vulnerabilities.moderate // 0')
-            echo "Critical: $REC_CRITICAL, High: $REC_HIGH, Moderate: $REC_MODERATE"
+          echo "=== Comprehensive Security Audit ==="
+          if [ -f "audit-comprehensive.json" ]; then
+            COMPREHENSIVE_CRITICAL=$(cat audit-comprehensive.json | jq -r '.metadata.vulnerabilities.critical // 0')
+            COMPREHENSIVE_HIGH=$(cat audit-comprehensive.json | jq -r '.metadata.vulnerabilities.high // 0')
+            COMPREHENSIVE_MODERATE=$(cat audit-comprehensive.json | jq -r '.metadata.vulnerabilities.moderate // 0')
+            echo "Critical: $COMPREHENSIVE_CRITICAL, High: $COMPREHENSIVE_HIGH, Moderate: $COMPREHENSIVE_MODERATE"
           fi
 
       - name: Check for critical vulnerabilities

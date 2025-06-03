@@ -42,10 +42,10 @@
     "docs:serve": "cd docs && yarn serve",
     "precommit": "yarn typecheck && yarn lint && yarn test",
     "validate": "yarn typecheck && yarn lint && yarn test && yarn build",
-    "audit:prod": "yarn npm audit --environment production",
+    "audit:prod": "yarn npm audit --all --environment production",
     "audit:all": "yarn npm audit --all",
-    "audit:recursive": "yarn npm audit --recursive",
-    "audit:json": "yarn npm audit --json",
+    "audit:comprehensive": "yarn npm audit --all --severity moderate",
+    "audit:json": "yarn npm audit --all --json",
     "security:check": "yarn audit:prod && yarn audit:all"
   },
   "keywords": [
