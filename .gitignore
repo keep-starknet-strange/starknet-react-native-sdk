@@ -213,3 +213,6 @@ coverage/
 
 # Windows
 Thumbs.db
+
+# Generated documentation
+docs/static/api/
