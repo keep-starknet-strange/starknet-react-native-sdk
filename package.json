@@ -105,9 +105,9 @@
     "react-native": "0.73.6",
     "react-native-builder-bob": "^0.20.0",
     "release-it": "^15.0.0",
-    "typescript": "5.0.4",
     "typedoc": "^0.26.0",
-    "typedoc-plugin-markdown": "^4.2.0"
+    "typedoc-plugin-markdown": "^4.2.0",
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
     "react": "*",
@@ -144,7 +144,9 @@
     "github": {
       "release": true,
       "releaseName": "Release v${version}",
-      "assets": ["*.tgz"]
+      "assets": [
+        "*.tgz"
+      ]
     },
     "npm": {
       "publish": true,
