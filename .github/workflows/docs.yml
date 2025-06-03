@@ -160,7 +160,7 @@ jobs:
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
 
       - name: Run Lighthouse audit
-        uses: treosh/lighthouse-ci-action@v11
+        uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             http://localhost:8080
