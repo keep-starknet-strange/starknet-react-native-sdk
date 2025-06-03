@@ -170,10 +170,7 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
-
-      - name: Install license-checker
-        run: yarn dlx license-checker --version
-
+        
       - name: Check licenses
         run: |
           echo "Checking license compliance..."

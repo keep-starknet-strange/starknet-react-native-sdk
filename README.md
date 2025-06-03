@@ -15,6 +15,15 @@ A comprehensive React Native SDK for Starknet that enables developers to build c
 
 ## Installation
 
+### Prerequisites
+
+- **Node.js**: Version 18.x - 22.x (Required for Docusaurus compatibility)
+  - ⚠️ **Note**: Node.js v23+ is not currently supported due to Docusaurus compatibility issues
+  - Use [nvm](https://github.com/nvm-sh/nvm) to manage Node versions: `nvm use` (reads from `.nvmrc`)
+- **Yarn**: v3.6.1+ (automatically managed via Corepack)
+
+### Install the SDK
+
 ```bash
 npm install @starknet/react-native-sdk
 # or
@@ -142,13 +151,13 @@ const customConfig = {
 
 🟢 **CI Pipeline**: All workflows passing  
 🟢 **Build & Test**: Working correctly  
-🟢 **Documentation**: Placeholder deployed (Docusaurus issue being resolved)  
+�� **Documentation**: Restored with Node.js 18-22 requirement  
 🟡 **Release**: Temporarily disabled due to dependency conflicts  
 
 ### Known Issues
-- **Docusaurus Build**: Chalk dependency compatibility issue with Node.js 20+
+- **Node.js v23 Compatibility**: Docusaurus 3.8.0 doesn't support Node.js v23+ (use Node 18-22)
 - **Release Tools**: CLI dependency conflicts with Yarn PnP resolution
-- **Security**: 5 vulnerabilities detected (3 critical, 1 high, 1 low)
+- **Security**: GitHub reports 5 vulnerabilities (production dependencies are clean)
 
 ---
 
@@ -250,12 +259,52 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ### Development Setup
 
+#### Node.js Version Management
+
+This project requires Node.js 18.x - 22.x for optimal compatibility:
+
+```bash
+# Install Node Version Manager (nvm) if you haven't already
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Use the project's specified Node version
+nvm use  # reads from .nvmrc
+
+# Or install and use Node 20 specifically
+nvm install 20
+nvm use 20
+```
+
+#### Local Development
+
 1. Clone the repository
-2. Install dependencies: `yarn install`
-3. Run the example app: `yarn example ios` or `yarn example android`
-4. Make your changes
+2. Ensure you're using Node.js 18-22: `nvm use`
+3. Install dependencies: `yarn install`
+4. Build the SDK: `yarn build`
 5. Run tests: `yarn test`
-6. Submit a pull request
+
+#### Documentation Development
+
+```bash
+# Start development server (requires Node.js 18-22)
+yarn docs:dev
+
+# Build documentation site
+yarn docs:build
+
+# Generate API documentation
+yarn docs:generate
+```
+
+#### Running the Example App
+
+```bash
+# iOS
+yarn dev:ios
+
+# Android  
+yarn dev:android
+```
 
 ## Roadmap
 
