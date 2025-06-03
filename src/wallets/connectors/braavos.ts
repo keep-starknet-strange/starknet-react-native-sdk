@@ -51,7 +51,7 @@ export class BraavosConnector extends BaseWalletConnector {
     }
   }
 
-  async signTransaction(calls: any[], details?: any): Promise<string[]> {
+  async signTransaction(_calls: any[], _details?: any): Promise<string[]> {
     this.validateConnection()
     
     try {

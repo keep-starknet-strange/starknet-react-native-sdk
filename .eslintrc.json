@@ -1,0 +1,23 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "prefer-const": "error",
+    "no-var": "error"
+  },
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "ignorePatterns": ["lib/", "node_modules/", "coverage/", "docs/"]
+} 
