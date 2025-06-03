@@ -29,8 +29,8 @@
     "@docusaurus/module-type-aliases": "^3.5.2",
     "@docusaurus/tsconfig": "^3.5.2",
     "@docusaurus/types": "^3.5.2",
-    "typescript": "~5.2.2",
-    "typedoc": "^0.26.0"
+    "typedoc": "^0.26.0",
+    "typescript": "~5.2.2"
   },
   "browserslist": {
     "production": [
@@ -47,4 +47,4 @@
   "engines": {
     "node": ">=18.0"
   }
-} 
+}
