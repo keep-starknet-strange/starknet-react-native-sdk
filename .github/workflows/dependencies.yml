@@ -1,0 +1,147 @@
+name: Dependencies
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Weekly on Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Update Yarn to latest
+        run: |
+          corepack prepare yarn@stable --activate
+          yarn set version stable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Check for outdated packages
+        run: |
+          echo "📊 Checking for outdated dependencies..."
+          yarn outdated --json > outdated.json || true
+          cat outdated.json
+
+      - name: Update dependencies
+        run: |
+          echo "🔄 Updating all dependencies to latest compatible versions..."
+          yarn up --recursive --mode=latest-safe
+          
+      - name: Run tests after update
+        run: |
+          yarn typecheck
+          yarn test
+          yarn build
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet yarn.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies to latest compatible versions'
+          title: '🔄 Weekly dependency updates'
+          body: |
+            ## 🔄 Automated dependency updates
+            
+            This PR updates all dependencies to their latest compatible versions.
+            
+            ### ✅ Validation
+            - [x] TypeScript compilation passes
+            - [x] All tests pass  
+            - [x] Package builds successfully
+            
+            ### 📊 Updated packages
+            Check the `yarn.lock` diff for detailed changes.
+            
+            ---
+            *This PR was created automatically by the dependency update workflow.*
+          branch: chore/update-dependencies
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+            chore
+
+  check-security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run security audit
+        run: |
+          echo "🔍 Running security audit..."
+          yarn audit --recursive --environment production --json > audit.json || true
+          
+          # Check if there are any high or critical vulnerabilities
+          if jq '.advisories[] | select(.severity == "high" or .severity == "critical")' audit.json | grep -q .; then
+            echo "❌ High or critical vulnerabilities found!"
+            cat audit.json | jq '.advisories[] | select(.severity == "high" or .severity == "critical")'
+            exit 1
+          else
+            echo "✅ No high or critical vulnerabilities found"
+          fi
+
+      - name: Create security issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Security vulnerabilities detected',
+              body: `## 🚨 Security Alert
+              
+              High or critical security vulnerabilities have been detected in dependencies.
+              
+              Please review and update the affected packages as soon as possible.
+              
+              **Workflow Run:** [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+              
+              ---
+              *This issue was created automatically by the security audit workflow.*`,
+              labels: ['security', 'bug', 'high-priority']
+            }) 

@@ -1,0 +1,320 @@
+/**
+ * Custom CSS for Starknet React Native SDK Documentation
+ */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-font-family-monospace: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  
+  /* Starknet brand colors */
+  --ifm-color-primary: #ec796b;
+  --ifm-color-primary-dark: #e85d44;
+  --ifm-color-primary-darker: #e04924;
+  --ifm-color-primary-darkest: #b73d1e;
+  --ifm-color-primary-light: #ef9588;
+  --ifm-color-primary-lighter: #f1a598;
+  --ifm-color-primary-lightest: #f6c5bc;
+  
+  /* Enhanced spacing */
+  --ifm-spacing-horizontal: 1.5rem;
+  --ifm-spacing-vertical: 1.5rem;
+  
+  /* Typography */
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.6;
+  --ifm-h1-font-size: 2.5rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.5rem;
+  
+  /* Shadows and borders */
+  --ifm-global-shadow-lw: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --ifm-global-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --ifm-global-border-width: 1px;
+  --ifm-border-radius: 8px;
+  
+  /* Code blocks */
+  --ifm-code-font-size: 14px;
+  --ifm-code-border-radius: 6px;
+  --ifm-code-padding-horizontal: 0.75rem;
+  --ifm-code-padding-vertical: 0.5rem;
+}
+
+/* Dark theme overrides */
+[data-theme='dark'] {
+  --ifm-color-primary: #ff8a65;
+  --ifm-color-primary-dark: #ff7043;
+  --ifm-color-primary-darker: #ff5722;
+  --ifm-color-primary-darkest: #e64a19;
+  --ifm-color-primary-light: #ffab91;
+  --ifm-color-primary-lighter: #ffccbc;
+  --ifm-color-primary-lightest: #fbe9e7;
+  
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #242424;
+}
+
+/* Global styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improved typography */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.markdown h1 {
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.markdown h2 {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Enhanced code blocks */
+.prism-code {
+  border-radius: var(--ifm-code-border-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+/* Inline code styling */
+.markdown code:not(.prism-code code) {
+  background-color: var(--ifm-color-emphasis-200);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.875em;
+  padding: 0.125rem 0.25rem;
+}
+
+[data-theme='dark'] .markdown code:not(.prism-code code) {
+  background-color: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Enhanced admonitions */
+.admonition {
+  border-radius: var(--ifm-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  margin: 1.5rem 0;
+}
+
+/* Custom hero section */
+.hero {
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest) 0%, var(--ifm-color-primary-lighter) 100%);
+  padding: 4rem 0;
+}
+
+[data-theme='dark'] .hero {
+  background: linear-gradient(135deg, #2a1810 0%, #3d2318 100%);
+}
+
+.hero__title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+/* Navigation improvements */
+.navbar {
+  background-color: var(--ifm-background-surface-color);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.navbar__logo {
+  height: 32px;
+}
+
+/* Sidebar improvements */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.menu__link {
+  border-radius: 6px;
+  margin: 2px 0;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.menu__link:hover {
+  background-color: var(--ifm-color-emphasis-100);
+  transform: translateX(2px);
+}
+
+.menu__link--active {
+  background-color: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-dark);
+  font-weight: 600;
+}
+
+/* Table of contents */
+.table-of-contents {
+  border-left: 2px solid var(--ifm-color-emphasis-200);
+  padding-left: 1rem;
+}
+
+.table-of-contents__link {
+  border-radius: 4px;
+  color: var(--ifm-color-emphasis-700);
+  display: block;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.table-of-contents__link:hover {
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.table-of-contents__link--active {
+  background-color: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-dark);
+  font-weight: 600;
+}
+
+/* Footer improvements */
+.footer {
+  background-color: var(--ifm-background-surface-color);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.footer__title {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.footer__link-item {
+  transition: color 0.2s ease;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* Announcement bar */
+.announcement {
+  background: linear-gradient(90deg, var(--ifm-color-primary-lightest), var(--ifm-color-primary-lighter));
+  border-bottom: 1px solid var(--ifm-color-primary-light);
+  color: var(--ifm-color-primary-darkest);
+  font-weight: 500;
+}
+
+/* Button improvements */
+.button {
+  border-radius: var(--ifm-border-radius);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+.button--primary {
+  background: linear-gradient(45deg, var(--ifm-color-primary), var(--ifm-color-primary-light));
+  border: none;
+}
+
+.button--primary:hover {
+  background: linear-gradient(45deg, var(--ifm-color-primary-dark), var(--ifm-color-primary));
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 2.5rem;
+  }
+  
+  .hero__subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .navbar__title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Custom components */
+.feature-card {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  box-shadow: var(--ifm-global-shadow-md);
+  transform: translateY(-2px);
+}
+
+.feature-card__title {
+  color: var(--ifm-color-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card__description {
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.6;
+}
+
+/* Badge styles */
+.badge {
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+}
+
+.badge--primary {
+  background-color: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+}
+
+.badge--success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge--warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge--info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+} 

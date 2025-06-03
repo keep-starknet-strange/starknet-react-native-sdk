@@ -1,0 +1,139 @@
+name: 🚀 Feature Request
+description: Suggest a new feature for the Starknet React Native SDK
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please fill out this template to help us understand your request.
+
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Search for existing requests
+      description: Please search to see if this feature has already been requested.
+      options:
+        - label: I have searched existing issues and this feature hasn't been requested before
+          required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New API/Method
+        - Wallet Integration
+        - Developer Experience
+        - Performance Improvement
+        - Documentation
+        - Example/Tutorial
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Important for my use case
+        - Critical - Blocking my development
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What use case does it enable?
+      placeholder: I'm trying to do X, but I can't because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: I would like the SDK to provide...
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-design
+    attributes:
+      label: API Design (Optional)
+      description: If you have ideas about how the API should look, please share them.
+      render: typescript
+      placeholder: |
+        // Example API design
+        const result = await sdk.newFeature({
+          option: 'value'
+        });
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternative solutions have you considered?
+      placeholder: I've considered using X, but...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: phase
+    attributes:
+      label: Development Phase
+      description: Which development phase would this feature best fit into?
+      options:
+        - label: Phase 1 - Core Wallet Connectivity (Current)
+        - label: Phase 2 - Embedded Wallet & Biometric Auth
+        - label: Phase 3 - Paymaster Integration & Advanced Features
+        - label: Phase 4 - Polish & Community Launch
+        - label: Future Phases
+
+  - type: checkboxes
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platforms should this feature support?
+      options:
+        - label: iOS
+        - label: Android
+        - label: Both
+        - label: Platform agnostic
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples/References
+      description: Are there any examples in other SDKs or libraries that inspire this feature?
+      placeholder: Similar to how X works in Y library...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, or examples that would help us understand this feature.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you be interested in contributing to this feature?
+      options:
+        - label: I'd like to implement this feature myself
+        - label: I can help with testing
+        - label: I can help with documentation
+        - label: I can provide feedback during development 

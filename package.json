@@ -28,13 +28,20 @@
     "example": "yarn workspace starknet-react-native-sdk-example",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "lint:fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\"",
     "pods": "cd example && pod-install --quiet",
     "dev:android": "yarn example android",
-    "dev:ios": "yarn example ios"
+    "dev:ios": "yarn example ios",
+    "docs:generate": "typedoc",
+    "docs:dev": "cd docs && yarn start",
+    "docs:build": "cd docs && yarn build",
+    "docs:serve": "cd docs && yarn serve",
+    "precommit": "yarn typecheck && yarn lint && yarn test",
+    "validate": "yarn typecheck && yarn lint && yarn test && yarn build"
   },
   "keywords": [
     "starknet",
@@ -98,7 +105,9 @@
     "react-native": "0.73.6",
     "react-native-builder-bob": "^0.20.0",
     "release-it": "^15.0.0",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "typedoc": "^0.26.0",
+    "typedoc-plugin-markdown": "^4.2.0"
   },
   "peerDependencies": {
     "react": "*",
@@ -124,5 +133,38 @@
       "module",
       "typescript"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release v${version}",
+      "requireCleanWorkingDir": true,
+      "requireUpstream": true,
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "Release v${version}",
+      "assets": ["*.tgz"]
+    },
+    "npm": {
+      "publish": true,
+      "publishPath": "."
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
+  },
+  "typedoc": {
+    "entryPoint": "src/index.ts",
+    "out": "docs/static/api",
+    "theme": "default",
+    "name": "Starknet React Native SDK API",
+    "excludePrivate": true,
+    "excludeInternal": true,
+    "hideGenerator": true,
+    "readme": "none"
   }
 }

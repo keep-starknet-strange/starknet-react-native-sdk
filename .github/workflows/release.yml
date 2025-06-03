@@ -1,0 +1,138 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release Package
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      release-version: ${{ steps.release.outputs.release-version }}
+      release-version-major: ${{ steps.release.outputs.release-version-major }}
+      release-version-minor: ${{ steps.release.outputs.release-version-minor }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: yarn
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Verify build and tests
+        run: |
+          yarn typecheck
+          yarn test
+          yarn build
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Release
+        id: release
+        run: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build package
+        run: yarn build
+
+      - name: Create Release Archive
+        run: |
+          npm pack
+          mv *.tgz starknet-react-native-sdk-${{ needs.release.outputs.release-version }}.tgz
+
+      - name: Generate Release Notes
+        id: generate-notes
+        run: |
+          echo "## 🚀 What's New in v${{ needs.release.outputs.release-version }}" > release-notes.md
+          echo "" >> release-notes.md
+          git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD~1)..HEAD >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 📦 Installation" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "\`\`\`bash" >> release-notes.md
+          echo "npm install @starknet/react-native-sdk@${{ needs.release.outputs.release-version }}" >> release-notes.md
+          echo "# or" >> release-notes.md
+          echo "yarn add @starknet/react-native-sdk@${{ needs.release.outputs.release-version }}" >> release-notes.md
+          echo "\`\`\`" >> release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.release.outputs.release-version }}
+          name: Release v${{ needs.release.outputs.release-version }}
+          body_path: release-notes.md
+          files: |
+            starknet-react-native-sdk-${{ needs.release.outputs.release-version }}.tgz
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(needs.release.outputs.release-version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-release:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: [release, create-github-release]
+    if: needs.release.outputs.released == 'true'
+    steps:
+      - name: Notify Discord
+        if: vars.DISCORD_WEBHOOK_URL
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d "{\"content\":\"🚀 **Starknet React Native SDK v${{ needs.release.outputs.release-version }}** has been released!\\n\\n📦 Install: \\\`npm install @starknet/react-native-sdk@${{ needs.release.outputs.release-version }}\\\`\\n🔗 Release: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.release.outputs.release-version }}\"}" \
+            ${{ vars.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify Twitter
+        if: vars.TWITTER_ENABLED == 'true'
+        run: |
+          echo "🚀 New release notification would be sent to Twitter/X"
+          echo "Version: v${{ needs.release.outputs.release-version }}" 

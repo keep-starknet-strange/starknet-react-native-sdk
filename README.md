@@ -233,7 +233,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## Roadmap
 
-See our [Product Requirements Document](.cursor/rules/prd.md) for detailed feature roadmap and implementation plans.
+See our [Product Requirements Document](PRD.md) for detailed feature roadmap and implementation plans.
 
 ## License
 
@@ -243,9 +243,5 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 - 📖 [Documentation](https://docs.starknet.io/react-native-sdk)
 - 💬 [Discord Community](https://discord.gg/starknet)
-- 🐛 [Issue Tracker](https://github.com/starknet-community/starknet-react-native-sdk/issues)
+- 🐛 [Issue Tracker](https://github.com/keep-starknet-strange/starknet-react-native-sdk/issues)
 - 📧 [Email Support](mailto:support@starknet.io)
-
----
-
-**Built with ❤️ by the Starknet Community**
