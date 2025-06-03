@@ -113,7 +113,7 @@
     "release-it": "^15.0.0",
     "typedoc": "^0.26.0",
     "typedoc-plugin-markdown": "^4.2.0",
-    "typescript": "5.0.4"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "react": "*",
