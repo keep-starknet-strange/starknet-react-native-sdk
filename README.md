@@ -140,31 +140,17 @@ const customConfig = {
 
 ## Development Status
 
-This SDK follows a phased development approach:
+🟢 **CI Pipeline**: All workflows passing  
+🟢 **Build & Test**: Working correctly  
+🟢 **Documentation**: Placeholder deployed (Docusaurus issue being resolved)  
+🟡 **Release**: Temporarily disabled due to dependency conflicts  
 
-### ✅ Phase 1: MVP - Core Wallet Connectivity (Current)
-- Basic wallet connectors for Argent X and Braavos
-- Starknet provider and network configuration
-- Error handling and validation utilities
-- TypeScript type definitions
+### Known Issues
+- **Docusaurus Build**: Chalk dependency compatibility issue with Node.js 20+
+- **Release Tools**: CLI dependency conflicts with Yarn PnP resolution
+- **Security**: 5 vulnerabilities detected (3 critical, 1 high, 1 low)
 
-### 🚧 Phase 2: Embedded Wallet & Biometric Auth
-- In-app wallet creation and management
-- Biometric authentication integration
-- Secure key storage implementation
-- React Native UI components
-
-### 🚧 Phase 3: Paymaster Integration & Advanced Features
-- AVNU paymaster support
-- Cartridge Controller integration
-- Session key functionality
-- Multi-call transaction batching
-
-### 🚧 Phase 4: Polish & Community Launch
-- Complete documentation
-- Example applications
-- Performance optimization
-- Security audits
+---
 
 ## Testing
 
