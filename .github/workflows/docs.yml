@@ -141,9 +141,23 @@ jobs:
 
       - name: Serve documentation locally
         run: |
-          npm install -g http-server
-          http-server ./docs-build -p 8080 &
-          sleep 5
+          echo "Starting HTTP server for documentation..."
+          npx http-server ./docs-build -p 8080 --silent &
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+          sleep 10
+          
+          # Check if server is running
+          if curl -f -s http://localhost:8080 > /dev/null; then
+            echo "✅ Server started successfully on port 8080"
+          else
+            echo "❌ Server failed to start"
+            kill $SERVER_PID 2>/dev/null || true
+            exit 1
+          fi
+          
+          # Store PID for cleanup
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
 
       - name: Run Lighthouse audit
         uses: treosh/lighthouse-ci-action@v11
@@ -153,4 +167,12 @@ jobs:
             http://localhost:8080/docs/getting-started
             http://localhost:8080/docs/api-reference
           uploadArtifacts: true
-          temporaryPublicStorage: true 
+          temporaryPublicStorage: true
+          
+      - name: Cleanup server
+        if: always()
+        run: |
+          if [ ! -z "$SERVER_PID" ]; then
+            echo "Stopping HTTP server (PID: $SERVER_PID)"
+            kill $SERVER_PID 2>/dev/null || true
+          fi 
