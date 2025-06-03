@@ -123,7 +123,12 @@
   },
   "resolutions": {
     "chalk": "4.1.2",
-    "@docusaurus/logger/chalk": "4.1.2"
+    "@docusaurus/logger/chalk": "4.1.2",
+    "onetime": "^5.1.2",
+    "restore-cursor": "^3.1.0",
+    "cli-cursor": "^3.1.0",
+    "string-width": "^4.2.3",
+    "ansi-align": "^3.0.1"
   },
   "codegenConfig": {
     "name": "RNStarknetSdkSpec",
