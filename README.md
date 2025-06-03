@@ -168,6 +168,38 @@ yarn typecheck
 yarn lint
 ```
 
+## Security
+
+The SDK includes comprehensive security auditing using Yarn v3's audit commands:
+
+```bash
+# Check production dependencies for vulnerabilities
+yarn audit:prod
+
+# Check all dependencies (including dev dependencies)
+yarn audit:all
+
+# Check transitive dependencies recursively
+yarn audit:recursive
+
+# Get detailed JSON output for programmatic use
+yarn audit:json
+
+# Run comprehensive security check
+yarn security:check
+```
+
+### CI Security Checks
+
+The CI pipeline includes multiple security layers:
+- **Security Audit**: Yarn v3 vulnerability scanning across production, dev, and transitive dependencies
+- **CodeQL Analysis**: Static code analysis for security vulnerabilities  
+- **Dependency Review**: GitHub's dependency scanning for pull requests
+- **License Compliance**: Automated license verification
+- **Secrets Scanning**: Trivy vulnerability scanner for exposed secrets
+
+Critical vulnerabilities in production dependencies will fail the CI build.
+
 ## API Reference
 
 ### Core Types
