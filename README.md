@@ -173,32 +173,40 @@ yarn lint
 The SDK includes comprehensive security auditing using Yarn v3's audit commands:
 
 ```bash
-# Check production dependencies for vulnerabilities
+# Check production dependencies across all workspaces for vulnerabilities
 yarn audit:prod
 
-# Check all dependencies (including dev dependencies)
+# Check all dependencies (including dev dependencies) across all workspaces  
 yarn audit:all
 
-# Check transitive dependencies recursively
-yarn audit:recursive
+# Comprehensive audit with moderate+ severity threshold
+yarn audit:comprehensive
 
 # Get detailed JSON output for programmatic use
 yarn audit:json
 
-# Run comprehensive security check
+# Run comprehensive security check (production + all dependencies)
 yarn security:check
 ```
 
 ### CI Security Checks
 
 The CI pipeline includes multiple security layers:
-- **Security Audit**: Yarn v3 vulnerability scanning across production, dev, and transitive dependencies
+- **Security Audit**: Yarn v3 vulnerability scanning across all workspaces for production, dev, and transitive dependencies
 - **CodeQL Analysis**: Static code analysis for security vulnerabilities  
 - **Dependency Review**: GitHub's dependency scanning for pull requests
 - **License Compliance**: Automated license verification
 - **Secrets Scanning**: Trivy vulnerability scanner for exposed secrets
 
 Critical vulnerabilities in production dependencies will fail the CI build.
+
+### Workspace Coverage
+The audit commands use `--all` flag to scan dependencies across all workspaces:
+- Main SDK package (`@starknet/react-native-sdk`)
+- Documentation site (`docs/`)  
+- Example application (`example/`)
+
+This ensures comprehensive coverage of the entire project's dependency tree.
 
 ## API Reference
 
