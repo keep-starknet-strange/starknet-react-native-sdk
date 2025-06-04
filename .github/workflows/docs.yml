@@ -39,11 +39,20 @@ jobs:
       - name: Setup Yarn version
         run: corepack prepare yarn@3.6.1 --activate
 
+      - name: Clean root Yarn install state
+        run: rm -f .yarn/install-state.gz
+
       - name: Clean Yarn cache
         run: yarn cache clean --all
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Clean docs workspace before install
+        working-directory: docs
+        run: |
+          rm -rf node_modules yarn.lock .pnp.* .yarn/cache .yarn/build-state.yml
+          echo "Docs workspace cleaned."
 
       - name: Install docs dependencies
         working-directory: docs
