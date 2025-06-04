@@ -39,6 +39,9 @@ jobs:
       - name: Setup Yarn version
         run: corepack prepare yarn@3.6.1 --activate
 
+      - name: Unplug chalk to attempt to fix CJS/ESM issues
+        run: yarn unplug chalk
+
       - name: Clean root Yarn install state
         run: rm -f .yarn/install-state.gz
 
