@@ -1,5 +1,4 @@
-import { BlockIdentifier } from 'starknet';
-
+import { BlockIdentifier } from './lib';
 // Network Types
 export type Network = 'mainnet' | 'sepolia';
 
