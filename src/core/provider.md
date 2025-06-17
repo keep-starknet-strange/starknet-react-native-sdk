@@ -25,7 +25,7 @@ A React Native SDK for interacting with Starknet networks, wrapper of Startknet.
 | starknet_getClassAt | ✅ Tested | |
 | starknet_getBlockTransactionCount | ✅ Tested | |
 | starknet_call | ✅ Tested | |
-| starknet_estimateFee | ❌ Not Tested | |
+| starknet_estimateFee | ❌ Not Implemented | |
 | starknet_estimateMessageFee | ❌ Not Tested | |
 | starknet_blockNumber | ✅ Tested | |
 | starknet_blockHashAndNumber | ✅ Tested | |
