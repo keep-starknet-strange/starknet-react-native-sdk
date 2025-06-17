@@ -1,5 +1,13 @@
-import { RpcProvider, constants, Invocation, InvocationsDetailsWithNonce, BlockIdentifier, EventFilter as StarknetEventFilter } from 'starknet';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import { 
+  StarknetProviderInterface,
+  StarknetProviderConfig,
+  ProviderState,
+  EventFilter,
+  TransactionReceipt,
+  NetworkState,
+  ProviderStateListener
+} from './types/provider';
 
 // Define the EventFilter interface based on the starknet package
 interface EventFilter {
