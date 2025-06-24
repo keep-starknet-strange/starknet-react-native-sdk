@@ -34,153 +34,149 @@ A React Native SDK for interacting with Starknet networks, wrapper of Startknet.
 | starknet_getEvents | ✅ Tested | |
 | starknet_getNonceForAddress | ✅ Tested | |
 
-## Installation
+## Files
 
-```bash
-npm install @keep-starknet-strange/starknet-react-native-sdk
-# or
-yarn add @keep-starknet-strange/starknet-react-native-sdk
+- `rpc-provider.ts` - Standalone RPC provider implementation
+- `provider.ts` - StarknetProvider with network monitoring
+- `example.ts` - Usage examples
+- `README.md` - This documentation
+
+### Type Organization
+
+```
+types/lib/index.ts          ← Core Starknet types (Call, Invocation, BlockIdentifier, etc.)
+types/provider.ts           ← Provider types (ProviderState, EventFilter, response types, etc.)
+core/rpc-provider.ts        ← RPC implementation
+core/StarknetProvider.ts    ← StarknetProvider
 ```
 
-## Usage
+## RpcProvider
 
-### Basic Setup
+### Usage
 
 ```typescript
-import { StarknetProvider } from 'starknet-react-native-sdk/src/core/provider';
+import { RpcProvider } from './rpc-provider';
+import { Call } from '../types/lib';
+import { FeeEstimate } from '../types/provider';
 
-
-const provider = new StarknetProvider({
-  network: 'mainnet', // or 'sepolia'
-  rpcUrl: 'YOUR_RPC_URL',
+const provider = new RpcProvider({
+  nodeUrl: 'https://alpha-mainnet.starknet.io',
   headers: {
-    // Optional custom headers
-  }
+    'Authorization': 'Bearer your-api-key' // Optional
+  },
+  retries: 3,
+  timeout: 30000
 });
-
-// Subscribe to provider state changes
-const unsubscribe = provider.onStateChange((state) => {
-  console.log('Provider state:', state);
-});
-
-// Clean up when done
-provider.destroy();
-```
-
-### Network Operations
-
-```typescript
-// Get current block number
-const blockNumber = await provider.getBlockNumber();
 
 // Get chain ID
 const chainId = await provider.getChainId();
 
-// Get block information
-const block = await provider.getBlockWithTxs(blockId);
+// Get latest block number
+const blockNumber = await provider.getBlockNumber();
 
-// Get transaction status
-const txStatus = await provider.getTransactionStatus(txHash);
-```
-
-### Contract Interactions
-
-```typescript
 // Call a contract
 const result = await provider.callContract({
-  contractAddress: '0x...',
-  entrypoint: 'function_name',
-  calldata: [...]
-}, 'latest');
+  contractAddress: '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
+  entrypoint: 'balanceOf',
+  calldata: ['0x1234567890abcdef']
+} as Call, 'latest');
 
-// Get storage value
-const storage = await provider.getStorageAt(
-  '0x...', // contract address
-  '0x...', // storage key
-  'latest'
-);
+// Estimate fees with proper typing
+const feeEstimate: FeeEstimate = await provider.getEstimateFee(tx, details);
 ```
 
-### Event Handling
+## StarknetProvider
+
+A higher-level provider that wraps RpcProvider with additional features like network monitoring and state management.
+
+### Usage
 
 ```typescript
-// Get events
-const events = await provider.getEvents({
-  from_block: 'latest',
-  to_block: 'latest',
-  address: '0x...',
-  keys: [['0x...']],
-  chunk_size: 10
+import { StarknetProvider } from './provider';
+import { StarknetProviderConfig } from '../types/provider';
+
+const provider = new StarknetProvider({
+  network: 'mainnet',
+  rpcUrl: 'https://alpha-mainnet.starknet.io',
+  headers: {
+    'Authorization': 'Bearer your-api-key' // Optional
+  }
 });
+
+// Subscribe to state changes
+const unsubscribe = provider.onStateChange((state) => {
+  console.log('Provider state:', state);
+});
+
+// Get current state
+const state = provider.getState();
+
+// Switch to different network
+await provider.switchProvider({
+  network: 'sepolia',
+  rpcUrl: 'https://alpha-sepolia.starknet.io'
+});
+
+// Clean up
+unsubscribe();
+provider.destroy();
 ```
 
-### Fee Estimation
+### State Management
 
-```typescript
-// Estimate transaction fee
-const fee = await provider.getEstimateFee(
-  {
-    contractAddress: '0x...',
-    entrypoint: 'function_name',
-    calldata: [...]
-  },
-  'latest'
-);
-
-// Estimate message fee
-const messageFee = await provider.estimateMessageFee(
-  {
-    // message details
-  },
-  'latest'
-);
-```
-
-## API Reference
-
-### Constructor
-
-```typescript
-new StarknetProvider(config: StarknetProviderConfig)
-```
-
-#### Config Options
-
-- `network`: 'mainnet' | 'sepolia'
-- `rpcUrl`: string (required)
-- `headers`: Record<string, string> (optional)
-
-### Methods
-
-- `getState()`: Get current provider state
-- `getNetworkName()`: Get current network name
-- `getCurrentRpcUrl()`: Get current RPC URL
-- `switchProvider(config)`: Switch to a different provider
-- `destroy()`: Clean up resources
-
-### Provider State
+The provider maintains a state object with:
 
 ```typescript
 interface ProviderState {
-  isConnected: boolean;
-  lastBlockNumber?: number;
-  network: Network;
-  isOnline: boolean;
+  isConnected: boolean;    // Connection to RPC node
+  lastBlockNumber?: number; // Latest block number
+  network: Network;        // Current network
+  isOnline: boolean;       // Internet connectivity
+}
+```
+
+### Network Monitoring
+
+The provider automatically monitors network connectivity by making periodic HEAD requests to a reliable endpoint. This helps detect when the device goes offline.
+
+## Configuration
+
+### RpcProviderOptions
+
+```typescript
+interface RpcProviderOptions {
+  nodeUrl: string;                    // RPC endpoint URL
+  headers?: Record<string, string>;   // Custom headers
+  retries?: number;                   // Number of retries (default: 3)
+  timeout?: number;                   // Request timeout in ms (default: 30000)
+}
+```
+
+### StarknetProviderConfig
+
+```typescript
+interface StarknetProviderConfig {
+  network: Network;                   // 'mainnet' | 'sepolia'
+  rpcUrl: string;                     // RPC endpoint URL
+  headers?: Record<string, string>;   // Custom headers
 }
 ```
 
 ## Error Handling
 
-The provider includes built-in error handling for common scenarios:
-- Network connectivity issues
-- RPC endpoint failures
-- Invalid configuration
-- Transaction failures
+Both providers include comprehensive error handling:
 
-## Contributing
+- Network errors are caught and reported
+- RPC errors include detailed error messages
+- Timeout handling prevents hanging requests
+- Automatic retries for transient failures
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Examples
 
-## License
+See `example.ts` for complete usage examples including:
 
-[Your License] 
+- Basic RPC provider usage with proper typing
+- StarknetProvider with state management
+- Fee estimation with typed responses
+- Event filtering
+- Contract calls
