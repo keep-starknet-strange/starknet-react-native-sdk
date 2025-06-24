@@ -1,44 +1,18 @@
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import { RpcProvider } from './rpc-provider';
+import { BlockIdentifier, Invocation, InvocationsDetailsWithNonce } from '../types/lib';
 import { 
-  StarknetProviderInterface,
-  StarknetProviderConfig,
-  ProviderState,
-  EventFilter,
-  TransactionReceipt,
-  NetworkState,
-  ProviderStateListener
-} from './types/provider';
-
-// Define the EventFilter interface based on the starknet package
-interface EventFilter {
-  from_block?: BlockIdentifier;
-  to_block?: BlockIdentifier;
-  address?: string;
-  keys?: string[][];
-  chunk_size: number;
-}
-
-export type Network = 'mainnet' | 'sepolia';
-
-export interface StarknetProviderConfig {
-  network: Network;
-  rpcUrl: string;
-  headers?: Record<string, string>;
-}
-
-export interface ProviderState {
-  isConnected: boolean;
-  lastBlockNumber?: number;
-  network: Network;
-  isOnline: boolean;
-}
+  StarknetProviderConfig, 
+  ProviderState, 
+  Network,
+  EventFilter
+} from '../types/provider';
 
 export class StarknetProvider {
   private provider: RpcProvider;
   private currentNetwork: Network;
   private state: ProviderState;
   private stateListeners: ((state: ProviderState) => void)[] = [];
-  private networkUnsubscribe: (() => void) | null = null;
+  private networkCheckInterval: number | null = null;
 
   constructor(config: StarknetProviderConfig) {
     if (!config.rpcUrl) {
@@ -54,11 +28,7 @@ export class StarknetProvider {
 
     this.provider = new RpcProvider({
       nodeUrl: config.rpcUrl,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...config.headers,
-      },
+      headers: config.headers,
     });
 
     // Initialize provider state and network monitoring
@@ -67,10 +37,19 @@ export class StarknetProvider {
   }
 
   private setupNetworkMonitoring() {
-    this.networkUnsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
-      const isOnline = state.isConnected ?? false;
-      this.updateState({ isOnline });
-    });
+    // Simple network monitoring using fetch
+    this.networkCheckInterval = setInterval(async () => {
+      try {
+        const response = await fetch('https://httpbin.org/status/200', { 
+          method: 'HEAD',
+          signal: AbortSignal.timeout(5000)
+        });
+        const isOnline = response.ok;
+        this.updateState({ isOnline });
+      } catch (error) {
+        this.updateState({ isOnline: false });
+      }
+    }, 10000); // Check every 10 seconds
   }
 
   private async initializeProvider() {
@@ -134,11 +113,7 @@ export class StarknetProvider {
     this.currentNetwork = config.network;
     this.provider = new RpcProvider({
       nodeUrl: config.rpcUrl,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...config.headers,
-      },
+      headers: config.headers,
     });
 
     this.updateState({
@@ -160,8 +135,8 @@ export class StarknetProvider {
    * Clean up resources
    */
   destroy() {
-    if (this.networkUnsubscribe) {
-      this.networkUnsubscribe();
+    if (this.networkCheckInterval) {
+      clearInterval(this.networkCheckInterval);
     }
     this.stateListeners = [];
   }
@@ -236,7 +211,6 @@ export class StarknetProvider {
 
   async getEstimateFee(tx: Invocation, blockId: string | number) {
     return this.provider.getEstimateFee(tx, { 
-      block_id: blockId,
       nonce: '0x0' // Add required nonce field
     } as InvocationsDetailsWithNonce);
   }
