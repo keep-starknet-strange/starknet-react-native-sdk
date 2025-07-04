@@ -1,5 +1,8 @@
 import type { Account, Call, InvocationsDetails, Provider } from 'starknet'
 
+export type BigNumberish = string | number | bigint;
+export type RawArgs = Record<string, any>;
+
 export interface StarknetConfig {
   networkId: StarknetNetwork
   rpcUrl?: string
