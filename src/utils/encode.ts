@@ -1,5 +1,4 @@
 // Base64 implementation copied from Starknet.js (without importing @scure/base)
-
 export const base64 = {
   encode: (data: Uint8Array): string => {
     // Implementation copied from @scure/base
@@ -147,6 +146,22 @@ export function buf2hex(buffer: Uint8Array): string {
 }
 
 /**
+ * Add hex prefix '0x' to hex-string
+ * @param hex hex-string
+ * @returns {string} The hex-string with 0x prefix
+ *
+ * @example
+ * ```typescript
+ * const hexString = '48656c6c6f';
+ * const result = encode.addHexPrefix(hexString);
+ * // result: "0x48656c6c6f"
+ * ```
+ */
+export function addHexPrefix(hex: string): string {
+  return hex.startsWith('0x') ? hex : `0x${hex}`;
+}
+
+/**
  * Remove hex prefix '0x' from hex-string
  * @param hex hex-string
  * @returns {string} The hex-string
@@ -160,200 +175,4 @@ export function buf2hex(buffer: Uint8Array): string {
  */
 export function removeHexPrefix(hex: string): string {
   return hex.replace(/^0x/i, '');
-}
-
-/**
- * Add hex prefix '0x' to base16-string
- * @param hex base16-string
- * @returns {string} The hex-string
- *
- * @example
- * ```typescript
- * const plainHexString = '48656c6c6f';
- * const result = encode.addHexPrefix(plainHexString);
- * // result: "0x48656c6c6f"
- * ```
- */
-export function addHexPrefix(hex: string): string {
-  return `0x${removeHexPrefix(hex)}`;
-}
-
-/**
- * Prepend or append to string
- *
- * *[internal usage]*
- *
- * Pads a string to a certain length with a specific string.
- * The padding can be applied either to the left or the right of the input string.
- *
- * @param {string} str The string to pad.
- * @param {number} length The target length for the padded string.
- * @param {boolean} left Set to true to add padding to the left, false to add it to the right.
- * @param {string} [padding='0'] The string to use for padding. Defaults to '0'.
- * @returns {string} The padded string.
- *
- * @example
- * ```typescript
- * const myString = 'hello';
- * const result = padString(myString, 10, true);
- * // result = '00000hello'
- * ```
- */
-function padString(
-  str: string,
-  length: number,
-  left: boolean,
-  padding: string = STRING_ZERO
-): string {
-  const diff = length - str.length;
-  let result = str;
-  if (diff > 0) {
-    const pad = padding.repeat(diff);
-    result = left ? pad + str : str + pad;
-  }
-  return result;
-}
-
-/**
- * Prepend string (default with '0')
- *
- * Pads a string to a certain length with a specific string.
- * The padding can be applied only to the left of the input string.
- *
- * @param {string} str The string to pad.
- * @param {number} length The target length for the padded string.
- * @param {string} [padding='0'] The string to use for padding. Defaults to '0'.
- * @returns {string} The padded string.
- * @example
- * ```typescript
- * const myString = '1A3F';
- * const result = encode.padLeft(myString, 10);
- * // result: '0000001A3F'
- * ```
- */
-export function padLeft(str: string, length: number, padding: string = STRING_ZERO): string {
-  return padString(str, length, true, padding);
-}
-
-/**
- * Calculate byte length of string
- *
- * *[no internal usage]*
- *
- * Calculates the byte length of a string based on a specified byte size.
- * The function rounds up the byte count to the nearest multiple of the specified byte size.
- *
- * @param {string} str The string whose byte length is to be calculated.
- * @param {number} [byteSize='8'] The size of the byte block to round up to. Defaults to 8.
- * @returns {number} The calculated byte length, rounded to the nearest multiple of byteSize.
- *
- * @example
- * ```typescript
- * const myString = 'Hello';
- * const result = encode.calcByteLength(myString, 4);
- * // result = 8 (rounded up to the nearest multiple of 4)
- *
- * ```
- */
-export function calcByteLength(str: string, byteSize: number = 8): number {
-  const { length } = str;
-  const remainder = length % byteSize;
-  return remainder ? ((length - remainder) / byteSize) * byteSize + byteSize : length;
-}
-
-/**
- * Prepend '0' to string bytes
- *
- * *[no internal usage]*
- *
- *
- * * Prepends padding to the left of a string to ensure it matches a specific byte length.
- * The function uses a specified padding character and rounds up the string length to the nearest multiple of `byteSize`.
- *
- * @param {string} str The string to be padded.
- * @param {number} [byteSize='8'] The byte block size to which the string length should be rounded up. Defaults to 8.
- * @param {string} [padding='0'] The character to use for padding. Defaults to '0'.
- * @returns {string} The padded string.
- *
- * @example
- * ```typescript
- * const myString = '123';
- * const result = encode.sanitizeBytes(myString);
- * // result: '00000123' (padded to 8 characters)
- * ```
- */
-export function sanitizeBytes(
-  str: string,
-  byteSize: number = 8,
-  padding: string = STRING_ZERO
-): string {
-  return padLeft(str, calcByteLength(str, byteSize), padding);
-}
-
-/**
- * Sanitizes a hex-string by removing any existing '0x' prefix, padding the string with '0' to ensure it has even length,
- * and then re-adding the '0x' prefix.
- *
- * *[no internal usage]*
- * @param {string} hex hex-string
- * @returns {string} format: hex-string
- *
- * @example
- * ```typescript
- * const unevenHex = '0x23abc';
- * const result = encode.sanitizeHex(unevenHex);
- * // result = '0x023abc' (padded to ensure even length)
- * ```
- */
-export function sanitizeHex(hex: string): string {
-  const hexWithoutPrefix = removeHexPrefix(hex);
-  const sanitizedHex = sanitizeBytes(hexWithoutPrefix, 2);
-  return sanitizedHex ? addHexPrefix(sanitizedHex) : sanitizedHex;
-}
-
-/**
- * String transformation util
- *
- * Pascal case to screaming snake case
- *
- * @param {string} text The PascalCase string to convert.
- * @returns {string} The converted snake_case string in uppercase.
- *
- * @example
- * ```typescript
- * const pascalString = 'PascalCaseExample';
- * const result = encode.pascalToSnake(pascalString);
- * // result: 'PASCAL_CASE_EXAMPLE'
- * ```
- */
-export const pascalToSnake = (text: string): string =>
-  /[a-z]/.test(text)
-    ? text
-        .split(/(?=[A-Z])/)
-        .join('_')
-        .toUpperCase()
-    : text;
-
-/**
- * Combine multiple Uint8Arrays into one.
- * Useful for wallet path creation.
- * @param {Uint8Array[]} uint8arrays An array of Uint8Array.
- * @returns {Uint8Array} all the Uint8Arrays joined.
- * @example
- * ```typescript
- * const path0buff = new Uint8Array([128, 0, 10, 85]);
- * const path1buff = new Uint8Array([71, 65, 233, 201]);
- * const result = encode.concatenateArrayBuffer([path0buff, path1buff]);
- * // result = Uint8Array(8) [128, 0, 10, 85, 71, 65, 233, 201]
- * ```
- */
-export function concatenateArrayBuffer(uint8arrays: Uint8Array[]): Uint8Array {
-  const totalLength = uint8arrays.reduce((total, uint8array) => total + uint8array.byteLength, 0);
-  const result = new Uint8Array(totalLength);
-  let offset = 0;
-  uint8arrays.forEach((uint8array) => {
-    result.set(uint8array, offset);
-    offset += uint8array.byteLength;
-  });
-  return result;
 }
