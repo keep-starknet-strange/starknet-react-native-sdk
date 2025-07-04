@@ -1,4 +1,50 @@
-import { base64 } from '@scure/base';
+// Base64 implementation copied from Starknet.js (without importing @scure/base)
+
+export const base64 = {
+  encode: (data: Uint8Array): string => {
+    // Implementation copied from @scure/base
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let result = '';
+    let i = 0;
+    while (i < data.length) {
+      const byte1 = data[i++];
+      const byte2 = i < data.length ? data[i++] : 0;
+      const byte3 = i < data.length ? data[i++] : 0;
+      
+      const enc1 = byte1 >> 2;
+      const enc2 = ((byte1 & 3) << 4) | (byte2 >> 4);
+      const enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
+      const enc4 = byte3 & 63;
+      
+      result += chars[enc1] + chars[enc2] + 
+                (i > data.length + 1 ? '=' : chars[enc3]) + 
+                (i > data.length ? '=' : chars[enc4]);
+    }
+    return result;
+  },
+  decode: (str: string): Uint8Array => {
+    // Implementation copied from @scure/base
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    str = str.replace(/=+$/, '');
+    const result = [];
+    let i = 0;
+    while (i < str.length) {
+      const enc1 = chars.indexOf(str[i++]);
+      const enc2 = chars.indexOf(str[i++]);
+      const enc3 = chars.indexOf(str[i++]);
+      const enc4 = chars.indexOf(str[i++]);
+      
+      const byte1 = (enc1 << 2) | (enc2 >> 4);
+      const byte2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+      const byte3 = ((enc3 & 3) << 6) | enc4;
+      
+      result.push(byte1);
+      if (enc3 !== -1) result.push(byte2);
+      if (enc4 !== -1) result.push(byte3);
+    }
+    return new Uint8Array(result);
+  }
+};
 
 export const IS_BROWSER = typeof window !== 'undefined';
 
