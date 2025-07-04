@@ -1,13 +1,17 @@
-import { SUBSCRIPTION_BLOCK_TAG } from '@starknet-io/starknet-types-08';
+// Local type definitions (copied from Starknet.js without external imports)
+export const SUBSCRIPTION_BLOCK_TAG = 'pending' as const;
+
 import { StarknetChainId } from '../../global/constants';
-import { weierstrass } from '../../utils/ec';
-import { EDataAvailabilityMode } from '../api'; //missing to create for v3 txs
 import { CairoEnum } from '../cairoEnum';
 import { CompiledContract, CompiledSierraCasm, ContractClass } from './contract';
 import { ValuesType } from '../helpers/valuesType';
-import { ResourceBounds } from '../../provider/types/spec.type'; //missing to create for v3 txs
 
-export type WeierstrassSignatureType = weierstrass.SignatureType;
+// Local weierstrass type definition
+export interface WeierstrassSignatureType {
+  r: string;
+  s: string;
+}
+
 export type ArraySignatureType = string[];
 export type Signature = ArraySignatureType | WeierstrassSignatureType;
 
@@ -137,6 +141,19 @@ export type Call = CallDetails & { entrypoint: string };
 export type CairoVersion = '0' | '1' | undefined;
 export type CompilerVersion = '0' | '1' | '2' | undefined;
 
+// Local type definitions for missing imports
+export type EDataAvailabilityMode = 'L1' | 'L2';
+
+export type ResourceBounds = {
+  l1_gas: ResourceBound;
+  l2_gas: ResourceBound;
+};
+
+export type ResourceBound = {
+  max_amount: BigNumberish;
+  max_price_per_unit: BigNumberish;
+};
+
 export type InvocationsDetails = {
   nonce?: BigNumberish;
   maxFee?: BigNumberish;
@@ -238,7 +255,7 @@ export type BlockNumber = BlockTag | null | number;
  */
 export type BlockIdentifier = BlockNumber | BigNumberish;
 
-export type SubscriptionBlockIdentifier = SUBSCRIPTION_BLOCK_TAG | (string & {}) | number | bigint;
+export type SubscriptionBlockIdentifier = typeof SUBSCRIPTION_BLOCK_TAG | (string & {}) | number | bigint;
 
 /**
  * items used by AccountInvocations
