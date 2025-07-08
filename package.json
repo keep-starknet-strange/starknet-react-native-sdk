@@ -83,7 +83,10 @@
     "react-native-get-random-values": "^1.11.0",
     "react-native-keychain": "^8.2.0",
     "starknet": "^6.11.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "chalk": "4.1.2",
+    "@noble/curves": "^1.9.2",
+    "@scure/base": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
@@ -128,7 +131,6 @@
     "node": ">=18.0.0 <=22.x"
   },
   "resolutions": {
-    "chalk": "4.1.2",
     "onetime": "^5.1.2",
     "restore-cursor": "^3.1.0",
     "cli-cursor": "^3.1.0",

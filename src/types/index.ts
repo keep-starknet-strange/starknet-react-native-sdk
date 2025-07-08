@@ -53,6 +53,9 @@ export interface Provider {
   getSimulateTransaction(invocation: any, invocationDetails?: any, blockIdentifier?: any): Promise<any>;
 }
 
+export type BigNumberish = string | number | bigint;
+export type RawArgs = Record<string, any>;
+
 export interface StarknetConfig {
   networkId: StarknetNetwork
   rpcUrl?: string

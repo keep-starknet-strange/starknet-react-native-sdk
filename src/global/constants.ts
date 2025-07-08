@@ -1,3 +1,4 @@
+import { ValuesType } from '../types/helpers/valuesType';
 // url
 
 const _BaseUrl = {
@@ -96,6 +97,8 @@ export const MASK_250 = 2n ** 250n - 1n; // 2 ** 250 - 1
 export const MASK_31 = 2n ** 31n - 1n; // 2 ** 31 - 1
 export const API_VERSION = ZERO;
 export const PRIME = 2n ** 251n + 17n * 2n ** 192n + 1n;
+export const MAX_STORAGE_ITEM_SIZE = 2n ** 128n; // 2 ** 128
+
 
 export const UDC = {
   ADDRESS: '0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf',
