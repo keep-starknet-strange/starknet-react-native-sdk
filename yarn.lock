@@ -3755,6 +3755,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/curves@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@noble/curves@npm:1.9.2"
+  dependencies:
+    "@noble/hashes": 1.8.0
+  checksum: bac582aefe951032cb04ed7627f139c3351ddfefd2625a25fe7f7a8043e7d781be4fad320d4ae75e31fa5d7e05ba643f16139877375130fd3cff86d81512e0f2
+  languageName: node
+  linkType: hard
+
 "@noble/curves@npm:~1.8.1":
   version: 1.8.2
   resolution: "@noble/curves@npm:1.8.2"
@@ -4588,7 +4597,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:~1.2.2, @scure/base@npm:~1.2.4, @scure/base@npm:~1.2.5":
+"@scure/base@npm:^1.2.6, @scure/base@npm:~1.2.2, @scure/base@npm:~1.2.4, @scure/base@npm:~1.2.5":
   version: 1.2.6
   resolution: "@scure/base@npm:1.2.6"
   checksum: 1058cb26d5e4c1c46c9cc0ae0b67cc66d306733baf35d6ebdd8ddaba242b80c3807b726e3b48cb0411bb95ec10d37764969063ea62188f86ae9315df8ea6b325
@@ -4644,6 +4653,16 @@ __metadata:
     "@noble/curves": ~1.7.0
     "@noble/hashes": ~1.6.0
   checksum: 7aa08f272c16e2ad6ef6d79e8d8e133fa56876a1e1dd276e9103bc7f6ac2bcff1974594be7e56b08203dbaed1b40353c1633b5673cd349969bb1769e6f0be8a0
+  languageName: node
+  linkType: hard
+
+"@scure/starknet@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@scure/starknet@npm:1.1.2"
+  dependencies:
+    "@noble/curves": ~1.9.0
+    "@noble/hashes": ~1.8.0
+  checksum: 54479d5b2f4768821a0813607f32863d375a82b8b0e3317b7bb31e8fe8a12d378bd3f3b7100c81a2db273e5c0485d807a61026c4acb067407bd51b1737ecbf97
   languageName: node
   linkType: hard
 
@@ -4997,8 +5016,11 @@ __metadata:
     "@commitlint/config-conventional": ^17.0.2
     "@docusaurus/faster": ^3.8.0
     "@evilmartians/lefthook": ^1.5.0
+    "@noble/curves": ^1.9.2
     "@react-native/eslint-config": ^0.73.1
     "@release-it/conventional-changelog": ^5.0.0
+    "@scure/base": ^1.2.6
+    "@scure/starknet": ^1.1.2
     "@types/jest": ^28.1.2
     "@types/react": ~18.2.14
     "@typescript-eslint/eslint-plugin": ^6.0.0
@@ -5007,6 +5029,7 @@ __metadata:
     "@walletconnect/utils": ^2.13.0
     "@walletconnect/web3wallet": ^1.12.0
     babel-plugin-module-resolver: ^5.0.2
+    chalk: ^5.4.1
     commitlint: ^17.0.2
     del-cli: ^5.1.0
     eslint: ^8.4.1
