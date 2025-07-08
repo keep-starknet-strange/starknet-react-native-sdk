@@ -1,4 +1,57 @@
-import type { Account, Call, InvocationsDetails, Provider } from 'starknet'
+// Type definitions based on Starknet.js (without importing external packages)
+export type BigNumberish = string | number | bigint;
+export type RawArgs = Record<string, any>;
+
+// Basic Starknet types (standalone definitions)
+export interface Account {
+  address: string;
+  deploy(contractAddress: string, calldata?: any[]): Promise<any>;
+  execute(calls: Call[], abis?: any[], transactionsDetail?: InvocationsDetails): Promise<any>;
+  estimateInvokeFee(calls: Call[], abis?: any[], transactionsDetail?: InvocationsDetails): Promise<any>;
+  estimateAccountDeployFee(contractAddress: string, calldata?: any[], transactionsDetail?: InvocationsDetails): Promise<any>;
+  signMessage(typedData: any): Promise<any>;
+  hashMessage(typedData: any): string;
+  verifyMessage(typedData: any, signature: any): boolean;
+}
+
+export interface Call {
+  contractAddress: string;
+  entrypoint: string;
+  calldata?: any[];
+}
+
+export interface InvocationsDetails {
+  nonce?: string;
+  maxFee?: string;
+  version?: string;
+  cairoVersion?: string;
+}
+
+export interface Provider {
+  getChainId(): Promise<string>;
+  getBlock(blockIdentifier?: any): Promise<any>;
+  getBlockNumber(): Promise<number>;
+  getClassAt(blockIdentifier: any, contractAddress: string): Promise<any>;
+  getClassHashAt(blockIdentifier: any, contractAddress: string): Promise<string>;
+  getClass(blockIdentifier: any, classHash: string): Promise<any>;
+  getEstimateFee(invocation: any, invocationDetails?: any): Promise<any>;
+  getInvokeEstimateFee(invocation: any, invocationDetails?: any): Promise<any>;
+  getL1MessageHash(message: any): Promise<string>;
+  getNonce(contractAddress: string, blockIdentifier?: any): Promise<string>;
+  getStorageAt(contractAddress: string, key: string, blockIdentifier?: any): Promise<string>;
+  getTransaction(txHash: string): Promise<any>;
+  getTransactionReceipt(txHash: string): Promise<any>;
+  getTransactionStatus(txHash: string): Promise<any>;
+  getTransactionTrace(txHash: string): Promise<any>;
+  getEvents(eventFilter: any): Promise<any>;
+  callContract(request: any, blockIdentifier?: any): Promise<any>;
+  invokeFunction(invocation: any, abis?: any[], transactionsDetail?: any): Promise<any>;
+  declareContract(contract: any, classHash: string, contractAddress?: string): Promise<any>;
+  deployContract(payload: any, constructorCalldata?: any[], addressSalt?: string): Promise<any>;
+  deployAccountContract(payload: any, constructorCalldata?: any[], addressSalt?: string): Promise<any>;
+  waitForTransaction(txHash: string, options?: any): Promise<any>;
+  getSimulateTransaction(invocation: any, invocationDetails?: any, blockIdentifier?: any): Promise<any>;
+}
 
 export interface StarknetConfig {
   networkId: StarknetNetwork
