@@ -1,4 +1,7 @@
-import type { ENUM_EVENT, EVENT_FIELD, STRUCT_EVENT } from '@starknet-io/starknet-types-07';
+// Local type definitions (copied from Starknet.js without external imports)
+export type ENUM_EVENT = 'enum';
+export type EVENT_FIELD = 'event_field';
+export type STRUCT_EVENT = 'struct';
 
 /** ABI */
 export type Abi = ReadonlyArray<FunctionAbi | AbiEvent | AbiStruct | InterfaceAbi | any>;
