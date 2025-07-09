@@ -29,8 +29,8 @@ describe('Starknet React Native SDK', () => {
       chainId: '0x534e5f5345504f4c4941'
     })
     
-    expect(provider.chainId).toBe('0x534e5f5345504f4c4941')
-    expect(provider.networkName).toBe('Starknet Testnet')
+    expect(provider.getNetworkName()).toBe('sepolia')
+    expect(provider.getCurrentRpcUrl()).toBe('https://alpha-sepolia.starknet.io')
   })
 
   test('gets default wallet connectors', () => {
