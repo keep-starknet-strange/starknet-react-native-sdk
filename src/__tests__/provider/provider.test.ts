@@ -1,9 +1,9 @@
-import { StarknetProvider, Network, StarknetProviderConfig } from './provider';
+import { StarknetProvider, StarknetProviderConfig } from './provider';
 
 // Real contract address for testing
 const TEST_CONTRACT_ADDRESS = '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d';
-const TEST_CLASS_HASH = '0x009524a94b41c4440a16fd96d7c1ef6ad6f44c1c013e96662734502cd4ee9b1f';
-const TEST_EVENT_KEY = '0x039c116571d9c88bae30f40bb0d9fdd934951a509a2e61b4132dd489c8830fcc_0';
+//const TEST_CLASS_HASH = '0x009524a94b41c4440a16fd96d7c1ef6ad6f44c1c013e96662734502cd4ee9b1f';
+//const TEST_EVENT_KEY = '0x039c116571d9c88bae30f40bb0d9fdd934951a509a2e61b4132dd489c8830fcc_0';
 const TEST_STORAGE_KEY = '0x05496768776e3db30053404f18067d81a6e06f5a2b0de326e21298fd9d569a9a';
 
 // Define response types
@@ -39,7 +39,7 @@ interface FeeEstimate {
 
 describe('StarknetProvider', () => {
   let provider: StarknetProvider;
-  let latestBlockNumber: number;
+  //let latestBlockNumber: number;
   let latestBlockHash: string;
   let latestTxHash: string;
 
