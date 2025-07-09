@@ -3,8 +3,8 @@
  * Singular class handling cairo u256 data type
  */
 
-import { BigNumberish, Uint256 } from '../../../types';
-import { addHexPrefix } from '../../encode';
+import { BigNumberish, Uint256 } from '@/types';
+import { addHexPrefix } from '@/utils/encode';
 import { CairoFelt } from './felt';
 
 export const UINT_128_MAX = (1n << 128n) - 1n;
