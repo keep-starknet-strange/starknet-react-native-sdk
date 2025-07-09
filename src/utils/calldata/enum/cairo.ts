@@ -11,7 +11,7 @@ import {
   Uint256,
   Uint512,
 } from '../../../types';
-import { CairoFelt, CairoUint256, CairoUint512 } from '../cairoDataTypes';
+import { CairoFelt, CairoUint256, CairoUint512 } from '../../cairoDataTypes';
 
 
 
