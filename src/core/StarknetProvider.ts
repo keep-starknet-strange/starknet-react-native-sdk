@@ -1,5 +1,5 @@
 import { RpcProvider } from './rpc-provider';
-import { BlockIdentifier, Invocation, InvocationsDetailsWithNonce } from '../types/lib';
+import { Invocation, InvocationsDetailsWithNonce } from '../types/lib';
 import { 
   StarknetProviderConfig, 
   ProviderState, 
@@ -211,7 +211,7 @@ export class StarknetProvider {
     return this.provider.callContract(request, blockId);
   }
 
-  async getEstimateFee(tx: Invocation, blockId: string | number) {
+  async getEstimateFee(tx: Invocation, _blockId: string | number) {
     return this.provider.getEstimateFee(tx, { 
       nonce: '0x0' // Add required nonce field
     } as InvocationsDetailsWithNonce);
