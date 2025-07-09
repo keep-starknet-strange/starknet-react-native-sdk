@@ -11,10 +11,8 @@ import {
   Uint256,
   Uint512,
 } from '../../../types';
+import { CairoFelt, CairoUint256, CairoUint512 } from '../cairoDataTypes';
 
-import { CairoFelt } from '@/utils/calldata/cairoDataTypes/felt';
-import { CairoUint256 } from '@/utils/calldata/cairoDataTypes/uint256';
-import { CairoUint512 } from '@/utils/calldata/cairoDataTypes/uint512';
 
 
 // Intended for internal usage, maybe should be exported somewhere else and not exported to utils
