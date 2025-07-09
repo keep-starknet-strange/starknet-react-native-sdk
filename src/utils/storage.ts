@@ -1,4 +1,4 @@
-import { SdkError } from './errors'
+import { SdkError } from '@/utils/errors'
 
 export interface SecureStorageConfig {
   serviceName?: string
