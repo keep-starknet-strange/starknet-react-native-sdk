@@ -1,4 +1,4 @@
-import { ErrorCode, StarknetSdkError } from '@/types'
+import { ErrorCode, StarknetSdkError } from '../types'
 
 export class SdkError extends Error implements StarknetSdkError {
   code: string

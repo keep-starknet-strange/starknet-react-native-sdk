@@ -1,5 +1,5 @@
 import { RpcProvider } from './rpc-provider';
-import { BlockIdentifier, Invocation, InvocationsDetailsWithNonce } from '../types/lib';
+import { Invocation, InvocationsDetailsWithNonce } from '../types/lib';
 import { 
   StarknetProviderConfig, 
   ProviderState, 
@@ -12,7 +12,7 @@ export class StarknetProvider {
   private currentNetwork: Network;
   private state: ProviderState;
   private stateListeners: ((state: ProviderState) => void)[] = [];
-  private networkCheckInterval: number | null = null;
+  private networkCheckInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(config: StarknetProviderConfig) {
     if (!config.rpcUrl) {
@@ -23,6 +23,8 @@ export class StarknetProvider {
     this.state = {
       isConnected: false,
       network: config.network,
+      chainId: '',
+      error: null,
       isOnline: true
     };
 
@@ -209,7 +211,7 @@ export class StarknetProvider {
     return this.provider.callContract(request, blockId);
   }
 
-  async getEstimateFee(tx: Invocation, blockId: string | number) {
+  async getEstimateFee(tx: Invocation, _blockId: string | number) {
     return this.provider.getEstimateFee(tx, { 
       nonce: '0x0' // Add required nonce field
     } as InvocationsDetailsWithNonce);

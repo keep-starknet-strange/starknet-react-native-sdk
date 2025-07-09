@@ -1,9 +1,9 @@
 // Reexport types from package
-export {
+export type {
   TypedDataRevision,
-  type StarknetEnumType,
-  type StarknetMerkleType,
-  type StarknetType,
-  type StarknetDomain,
-  type TypedData,
-} from '@starknet-io/starknet-types-07';
+  StarknetEnumType,
+  StarknetMerkleType,
+  StarknetType,
+  StarknetDomain,
+  TypedData,
+} from './lib/contract/abi';

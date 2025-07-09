@@ -1,4 +1,13 @@
-import type { ENUM_EVENT, EVENT_FIELD, STRUCT_EVENT } from '@starknet-io/starknet-types-07';
+// Define the types locally since the external package doesn't exist
+export type ENUM_EVENT = any;
+export type EVENT_FIELD = any;
+export type STRUCT_EVENT = any;
+export type TypedDataRevision = any;
+export type StarknetEnumType = any;
+export type StarknetMerkleType = any;
+export type StarknetType = any;
+export type StarknetDomain = any;
+export type TypedData = any;
 
 /** ABI */
 export type Abi = ReadonlyArray<FunctionAbi | AbiEvent | AbiStruct | InterfaceAbi | any>;

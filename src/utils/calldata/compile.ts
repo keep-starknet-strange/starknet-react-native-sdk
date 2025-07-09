@@ -1,4 +1,4 @@
-import { BigNumberish, RawArgs, Calldata } from '../../types/lib';
+import { RawArgs, Calldata } from '../../types/lib';
 import { felt } from './enum/cairo';
 import { isBigInt } from '../typed';
 import { CairoOption, CairoOptionVariant } from './enum/CairoOptions';
@@ -15,7 +15,7 @@ export function compile(rawArgs: RawArgs): Calldata {
     const getEntries = (o: object, prefix = '.'): any => {
       const oe = Array.isArray(o) ? [o.length.toString(), ...o] : o;
       return Object.entries(oe).flatMap(([k, v]) => {
-        let value = v;
+        const value = v;
         const kk = Array.isArray(oe) && k === '0' ? '$$len' : k;
         if (isBigInt(value)) return [[`${prefix}${kk}`, felt(value)]];
         if (Object(value) === value) {

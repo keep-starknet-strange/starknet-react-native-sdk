@@ -1,3 +1,3 @@
-export * from './CairoCustomEnum';
-export * from './CairoOption';
-export * from './CairoResult';
+export * from './CairoCustomEnums';
+export * from './CairoOptions';
+export * from './CairoResults';

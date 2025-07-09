@@ -2,6 +2,38 @@
 export type BigNumberish = string | number | bigint;
 export type RawArgs = Record<string, any>;
 
+// Cairo types
+export type Abi = any[];
+export type AbiEnums = Record<string, any>;
+export type AbiStructs = Record<string, any>;
+export type ContractVersion = { cairo: string; compiler?: string };
+export const ETH_ADDRESS = 'core::starknet::eth_address::EthAddress';
+export const NON_ZERO_PREFIX = 'core::zeroable::NonZero::<';
+
+export enum Literal {
+  ContractAddress = 'core::starknet::contract_address::ContractAddress',
+  Secp256k1Point = 'core::starknet::secp256k1::Secp256k1Point'
+}
+
+export enum Uint {
+  u8 = 'core::integer::u8',
+  u16 = 'core::integer::u16',
+  u32 = 'core::integer::u32',
+  u64 = 'core::integer::u64',
+  u128 = 'core::integer::u128',
+  u256 = 'core::integer::u256'
+}
+
+export interface Uint256 {
+  type: 'struct';
+  members: any[];
+}
+
+export interface Uint512 {
+  type: 'struct';
+  members: any[];
+}
+
 // Basic Starknet types (standalone definitions)
 export interface Account {
   address: string;
@@ -52,9 +84,6 @@ export interface Provider {
   waitForTransaction(txHash: string, options?: any): Promise<any>;
   getSimulateTransaction(invocation: any, invocationDetails?: any, blockIdentifier?: any): Promise<any>;
 }
-
-export type BigNumberish = string | number | bigint;
-export type RawArgs = Record<string, any>;
 
 export interface StarknetConfig {
   networkId: StarknetNetwork

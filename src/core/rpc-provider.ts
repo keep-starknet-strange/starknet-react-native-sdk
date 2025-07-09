@@ -1,15 +1,12 @@
 import { 
-  BlockIdentifier, 
   Call, 
   Invocation, 
-  InvocationsDetailsWithNonce,
-  BigNumberish
+  InvocationsDetailsWithNonce
 } from '../types/lib';
 import { 
   EventFilter,
   TransactionReceipt,
   Block,
-  PendingBlock,
   StateUpdate,
   ContractClass,
   FeeEstimate

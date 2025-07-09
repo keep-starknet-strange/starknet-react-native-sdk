@@ -18,7 +18,7 @@ function felt(value: string): string {
 
 function CallData_compile(data: RawArgs): string[] {
   // Simplified CallData compilation
-  return Object.entries(data).map(([key, value]) => value?.toString() || '0');
+  return Object.entries(data).map(([_key, value]) => value?.toString() || '0');
 }
 
 /**
