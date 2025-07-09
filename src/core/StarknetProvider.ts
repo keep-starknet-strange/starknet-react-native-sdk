@@ -12,7 +12,7 @@ export class StarknetProvider {
   private currentNetwork: Network;
   private state: ProviderState;
   private stateListeners: ((state: ProviderState) => void)[] = [];
-  private networkCheckInterval: number | null = null;
+  private networkCheckInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(config: StarknetProviderConfig) {
     if (!config.rpcUrl) {
