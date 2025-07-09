@@ -1,4 +1,4 @@
-import { SdkError } from './errors'
+import { SdkError } from '@/utils/errors'
 
 export const isValidStarknetAddress = (address: string): boolean => {
   if (!address || typeof address !== 'string') return false
