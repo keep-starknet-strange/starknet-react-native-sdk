@@ -1,13 +1,13 @@
 // TODO Convert to CairoFelt base on CairoUint256 and implement it in the codebase in the backward compatible manner
 
-import { BigNumberish } from '../../../types';
-import { isHex, isStringWholeNumber } from '../../num';
+import { BigNumberish } from '@/types';
+import { isHex, isStringWholeNumber } from '@/utils/num';
 import {
   encodeShortString,
   isShortString,
   isText
-} from '../../shortString';
-import { isBoolean, isString, isBigInt } from '../../typed';
+} from '@/utils/shortString';
+import { isBoolean, isString, isBigInt } from '@/utils/typed';
 
 /**
  * Create felt Cairo type (cairo type helper)
