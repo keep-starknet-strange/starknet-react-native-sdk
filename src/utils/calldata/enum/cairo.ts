@@ -11,9 +11,7 @@ import {
   Uint256,
   Uint512,
 } from '../../../types';
-import { CairoFelt } from '../cairoDataTypes/felt';
 import { CairoUint256 } from '../cairoDataTypes/uint256';
-import { CairoUint512 } from '../cairoDataTypes/uint512';
 
 // Intended for internal usage, maybe should be exported somewhere else and not exported to utils
 /**
@@ -242,7 +240,7 @@ export function getAbiContractVersion(abi: Abi): ContractVersion {
  * uint256('892349863487563453485768723498');
  * ```
  */
-export const uint256 = (it: BigNumberish): Uint256 => {
+export const uint256 = (_it: BigNumberish): Uint256 => {
   return { type: 'struct', members: [] };
 };
 
@@ -255,7 +253,7 @@ export const uint256 = (it: BigNumberish): Uint256 => {
  * uint512('345745685892349863487563453485768723498');
  * ```
  */
-export const uint512 = (it: BigNumberish): Uint512 => {
+export const uint512 = (_it: BigNumberish): Uint512 => {
   return { type: 'struct', members: [] };
 };
 
