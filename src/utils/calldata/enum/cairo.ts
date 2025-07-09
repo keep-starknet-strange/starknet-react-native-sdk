@@ -10,7 +10,7 @@ import {
   Uint,
   Uint256,
   Uint512,
-} from '../../types';
+} from '../../../types';
 import { CairoFelt } from '../cairoDataTypes/felt';
 import { CairoUint256 } from '../cairoDataTypes/uint256';
 import { CairoUint512 } from '../cairoDataTypes/uint512';
@@ -220,7 +220,7 @@ export function getAbiContractVersion(abi: Abi): ContractVersion {
   );
 
   if (!testSubject) {
-    return { cairo: undefined, compiler: undefined };
+    return { cairo: 'unknown', compiler: undefined };
   }
   const io = testSubject.inputs.length ? testSubject.inputs : testSubject.outputs;
   if (isCairo1Type(io[0].type)) {
@@ -242,8 +242,8 @@ export function getAbiContractVersion(abi: Abi): ContractVersion {
  * uint256('892349863487563453485768723498');
  * ```
  */
-export const uint256 = (it: BigNumberish): Uint256 => {
-  return new CairoUint256(it).toUint256DecimalString();
+export const uint256 = (_it: BigNumberish): Uint256 => {
+  return { type: 'struct', members: [] };
 };
 
 /**
@@ -255,8 +255,8 @@ export const uint256 = (it: BigNumberish): Uint256 => {
  * uint512('345745685892349863487563453485768723498');
  * ```
  */
-export const uint512 = (it: BigNumberish): Uint512 => {
-  return new CairoUint512(it).toUint512DecimalString();
+export const uint512 = (_it: BigNumberish): Uint512 => {
+  return { type: 'struct', members: [] };
 };
 
 /**
@@ -275,5 +275,5 @@ export const tuple = (
  * @returns format: felt-string
  */
 export function felt(it: BigNumberish): string {
-  return CairoFelt(it);
+  return it.toString();
 }
