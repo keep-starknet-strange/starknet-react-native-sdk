@@ -1,48 +1,180 @@
-// NOTE: generated with scripts/generateRpcErrorMap.js
-export type RPC_ERROR_SET = {
-  FAILED_TO_RECEIVE_TXN: 'FAILED_TO_RECEIVE_TXN';
-  NO_TRACE_AVAILABLE: 'NO_TRACE_AVAILABLE';
-  CONTRACT_NOT_FOUND: 'CONTRACT_NOT_FOUND';
-  ENTRYPOINT_NOT_FOUND: 'ENTRYPOINT_NOT_FOUND';
-  BLOCK_NOT_FOUND: 'BLOCK_NOT_FOUND';
-  INVALID_TXN_INDEX: 'INVALID_TXN_INDEX';
-  CLASS_HASH_NOT_FOUND: 'CLASS_HASH_NOT_FOUND';
-  TXN_HASH_NOT_FOUND: 'TXN_HASH_NOT_FOUND';
-  PAGE_SIZE_TOO_BIG: 'PAGE_SIZE_TOO_BIG';
-  NO_BLOCKS: 'NO_BLOCKS';
-  INVALID_CONTINUATION_TOKEN: 'INVALID_CONTINUATION_TOKEN';
-  TOO_MANY_KEYS_IN_FILTER: 'TOO_MANY_KEYS_IN_FILTER';
-  CONTRACT_ERROR: 'CONTRACT_ERROR';
-  TRANSACTION_EXECUTION_ERROR: 'TRANSACTION_EXECUTION_ERROR';
-  STORAGE_PROOF_NOT_SUPPORTED: 'STORAGE_PROOF_NOT_SUPPORTED';
-  CLASS_ALREADY_DECLARED: 'CLASS_ALREADY_DECLARED';
-  INVALID_TRANSACTION_NONCE: 'INVALID_TRANSACTION_NONCE';
-  INSUFFICIENT_RESOURCES_FOR_VALIDATE: 'INSUFFICIENT_RESOURCES_FOR_VALIDATE';
-  INSUFFICIENT_ACCOUNT_BALANCE: 'INSUFFICIENT_ACCOUNT_BALANCE';
-  VALIDATION_FAILURE: 'VALIDATION_FAILURE';
-  COMPILATION_FAILED: 'COMPILATION_FAILED';
-  CONTRACT_CLASS_SIZE_IS_TOO_LARGE: 'CONTRACT_CLASS_SIZE_IS_TOO_LARGE';
-  NON_ACCOUNT: 'NON_ACCOUNT';
-  DUPLICATE_TX: 'DUPLICATE_TX';
-  COMPILED_CLASS_HASH_MISMATCH: 'COMPILED_CLASS_HASH_MISMATCH';
-  UNSUPPORTED_TX_VERSION: 'UNSUPPORTED_TX_VERSION';
-  UNSUPPORTED_CONTRACT_CLASS_VERSION: 'UNSUPPORTED_CONTRACT_CLASS_VERSION';
-  UNEXPECTED_ERROR: 'UNEXPECTED_ERROR';
-  INVALID_SUBSCRIPTION_ID: 'INVALID_SUBSCRIPTION_ID';
-  TOO_MANY_ADDRESSES_IN_FILTER: 'TOO_MANY_ADDRESSES_IN_FILTER';
-  TOO_MANY_BLOCKS_BACK: 'TOO_MANY_BLOCKS_BACK';
-  COMPILATION_ERROR: 'COMPILATION_ERROR';
-  INVALID_ADDRESS: 'INVALID_ADDRESS';
-  TOKEN_NOT_SUPPORTED: 'TOKEN_NOT_SUPPORTED';
-  INVALID_SIGNATURE: 'INVALID_SIGNATURE';
-  MAX_AMOUNT_TOO_LOW: 'MAX_AMOUNT_TOO_LOW';
-  CLASS_HASH_NOT_SUPPORTED: 'CLASS_HASH_NOT_SUPPORTED';
-  PAYMASTER_TRANSACTION_EXECUTION_ERROR: 'PAYMASTER_TRANSACTION_EXECUTION_ERROR';
-  INVALID_TIME_BOUNDS: 'INVALID_TIME_BOUNDS';
-  INVALID_DEPLOYMENT_DATA: 'INVALID_DEPLOYMENT_DATA';
-  INVALID_CLASS_HASH: 'INVALID_CLASS_HASH';
-  INVALID_ID: 'INVALID_ID';
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR';
-};
+import { ErrorCode, StarknetSdkError } from '../types'
 
-export type RPC_ERROR = RPC_ERROR_SET[keyof RPC_ERROR_SET];
+export class SdkError extends Error implements StarknetSdkError {
+  code: string
+  details?: Record<string, unknown>
+
+  constructor(
+    code: ErrorCode,
+    message: string,
+    details?: Record<string, unknown>
+  ) {
+    super(message)
+    this.name = 'StarknetSdkError'
+    this.code = code
+    this.details = details
+    Object.setPrototypeOf(this, SdkError.prototype)
+  }
+
+  static walletNotFound(walletId?: string): SdkError {
+    return new SdkError(
+      ErrorCode.WALLET_NOT_FOUND,
+      walletId
+        ? `Wallet with ID "${walletId}" not found or not available`
+        : 'No compatible wallet found',
+      {walletId}
+    )
+  }
+
+  static connectionFailed(reason?: string): SdkError {
+    return new SdkError(
+      ErrorCode.CONNECTION_FAILED,
+      `Failed to connect to wallet${reason ? `: ${reason}` : ''}`,
+      {reason}
+    )
+  }
+
+  static connectionRejected(): SdkError {
+    return new SdkError(
+      ErrorCode.CONNECTION_REJECTED,
+      'Wallet connection was rejected by user'
+    )
+  }
+
+  static biometricNotAvailable(): SdkError {
+    return new SdkError(
+      ErrorCode.BIOMETRIC_NOT_available,
+      'Biometric authentication is not available on this device'
+    )
+  }
+
+  static biometricAuthFailed(reason?: string): SdkError {
+    return new SdkError(
+      ErrorCode.BIOMETRIC_AUTH_FAILED,
+      `Biometric authentication failed${reason ? `: ${reason}` : ''}`,
+      {reason}
+    )
+  }
+
+  static unauthorized(): SdkError {
+    return new SdkError(
+      ErrorCode.UNAUTHORIZED,
+      'Operation requires authentication'
+    )
+  }
+
+  static insufficientFunds(required?: string, available?: string): SdkError {
+    return new SdkError(
+      ErrorCode.INSUFFICIENT_FUNDS,
+      'Insufficient funds for transaction',
+      {required, available}
+    )
+  }
+
+  static transactionFailed(hash?: string, reason?: string): SdkError {
+    return new SdkError(
+      ErrorCode.TRANSACTION_FAILED,
+      `Transaction failed${reason ? `: ${reason}` : ''}`,
+      {hash, reason}
+    )
+  }
+
+  static invalidTransaction(reason?: string): SdkError {
+    return new SdkError(
+      ErrorCode.INVALID_TRANSACTION,
+      `Invalid transaction${reason ? `: ${reason}` : ''}`,
+      {reason}
+    )
+  }
+
+  static accountNotDeployed(address?: string): SdkError {
+    return new SdkError(
+      ErrorCode.ACCOUNT_NOT_DEPLOYED,
+      'Account is not deployed on Starknet',
+      {address}
+    )
+  }
+
+  static accountDeploymentFailed(reason?: string): SdkError {
+    return new SdkError(
+      ErrorCode.ACCOUNT_DEPLOYMENT_FAILED,
+      `Account deployment failed${reason ? `: ${reason}` : ''}`,
+      {reason}
+    )
+  }
+
+  static networkError(message?: string): SdkError {
+    return new SdkError(
+      ErrorCode.NETWORK_ERROR,
+      message || 'Network connection error'
+    )
+  }
+
+  static rpcError(code?: number, message?: string): SdkError {
+    return new SdkError(
+      ErrorCode.RPC_ERROR,
+      message || 'RPC request failed',
+      {code}
+    )
+  }
+
+  static paymasterError(message?: string): SdkError {
+    return new SdkError(
+      ErrorCode.PAYMASTER_ERROR,
+      message || 'Paymaster operation failed'
+    )
+  }
+
+  static paymasterNotConfigured(): SdkError {
+    return new SdkError(
+      ErrorCode.PAYMASTER_NOT_CONFIGURED,
+      'No paymaster configured for this operation'
+    )
+  }
+
+  static invalidConfiguration(field?: string): SdkError {
+    return new SdkError(
+      ErrorCode.INVALID_CONFIGURATION,
+      field
+        ? `Invalid configuration for field: ${field}`
+        : 'Invalid SDK configuration'
+    )
+  }
+
+  static operationCancelled(): SdkError {
+    return new SdkError(
+      ErrorCode.OPERATION_CANCELLED,
+      'Operation was cancelled by user'
+    )
+  }
+}
+
+export const isStarknetSdkError = (error: unknown): error is StarknetSdkError =>
+  error instanceof Error && 'code' in error
+
+export const getErrorMessage = (error: unknown): string => {
+  if (isStarknetSdkError(error)) {
+    return error.message
+  }
+  if (error instanceof Error) {
+    return error.message
+  }
+  return String(error)
+}
+
+export const handleAsyncError = async <T>(
+  operation: () => Promise<T>
+): Promise<T> => {
+  try {
+    return await operation()
+  } catch (error) {
+    if (isStarknetSdkError(error)) {
+      throw error
+    }
+    throw new SdkError(
+      ErrorCode.NETWORK_ERROR,
+      getErrorMessage(error),
+      {originalError: error}
+    )
+  }
+} 
