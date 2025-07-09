@@ -47,7 +47,7 @@ export const base64 = {
 
 export const IS_BROWSER = typeof window !== 'undefined';
 
-const STRING_ZERO = '0';
+//const STRING_ZERO = '0';
 
 /**
  * Some functions recreated from https://github.com/pedrouid/enc-utils/blob/master/src/index.ts
