@@ -23,6 +23,8 @@ export class StarknetProvider {
     this.state = {
       isConnected: false,
       network: config.network,
+      chainId: '',
+      error: null,
       isOnline: true
     };
 
