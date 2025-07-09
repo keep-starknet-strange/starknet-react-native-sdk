@@ -9,7 +9,8 @@ import { BigNumberish } from '../../types';
 // Stark curve params (copied from Starknet.js)
 const CURVE_P = BigInt('0x800000000000011000000000000000000000000000000000000000000000001');
 const CURVE_A = BigInt(1);
-//const CURVE_B = BigInt('3141592653589793238462643383279502884197169399375105820974944592307816406665');
+
+// const CURVE_B = BigInt('3141592653589793238462643383279502884197169399375105820974944592307816406665');
 const CURVE_Gx = BigInt('874739451078007766457464989774322083649278607533249481151382481072868806602');
 const CURVE_Gy = BigInt('152666792071518830868575557812948353041420400780739481342941381225525861407');
 const CURVE_N = BigInt('3618502788666131213697322783095070105526743751716087489154079457884512865583');
@@ -51,7 +52,7 @@ function pointAdd(x1: bigint, y1: bigint, x2: bigint, y2: bigint): [bigint, bigi
 }
 
 function modInv(a: bigint, m: bigint): bigint {
-  let [g, x] = egcd(a, m);
+  const [g, x] = egcd(a, m);
   if (g !== 1n) throw new Error('modInv: no inverse');
   return mod(x, m);
 }
@@ -64,7 +65,7 @@ function egcd(a: bigint, b: bigint): [bigint, bigint] {
 
 function scalarMultBase(scalar: bigint): [bigint, bigint] {
   // Simple double-and-add for G
-  let x = CURVE_Gx, y = CURVE_Gy;
+  const x = CURVE_Gx, y = CURVE_Gy;
   let resX = 0n, resY = 0n;
   let started = false;
   for (let i = 251; i >= 0; i--) {
@@ -120,7 +121,7 @@ function getStarkKey(privateKey: BigNumberish): string {
   else priv = BigInt('0x' + privateKey.toString().replace(/^0x/i, ''));
   priv = mod(priv, CURVE_N);
   if (priv === 0n) throw new Error('Invalid private key');
-  const [pubX, _pubY] = scalarMultBase(priv);
+  const [pubX] = scalarMultBase(priv);
   // Return as 0x-prefixed hex string
   const pubXHex = pubX.toString(16).padStart(64, '0');
   return '0x' + pubXHex;
