@@ -1,7 +1,13 @@
-// Local type definitions (copied from Starknet.js without external imports)
-export type ENUM_EVENT = 'enum';
-export type EVENT_FIELD = 'event_field';
-export type STRUCT_EVENT = 'struct';
+// Define the types locally since the external package doesn't exist
+export type ENUM_EVENT = any;
+export type EVENT_FIELD = any;
+export type STRUCT_EVENT = any;
+export type TypedDataRevision = any;
+export type StarknetEnumType = any;
+export type StarknetMerkleType = any;
+export type StarknetType = any;
+export type StarknetDomain = any;
+export type TypedData = any;
 
 /** ABI */
 export type Abi = ReadonlyArray<FunctionAbi | AbiEvent | AbiStruct | InterfaceAbi | any>;
