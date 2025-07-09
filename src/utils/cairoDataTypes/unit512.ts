@@ -3,8 +3,8 @@
  * Singular class handling cairo u512 data type
  */
 
-import { BigNumberish, type Uint512 } from '../../../types';
-import { addHexPrefix } from '../../encode';
+import { BigNumberish, type Uint512 } from '@/types';
+import { addHexPrefix } from '@/utils/encode';
 import { CairoFelt } from './felt';
 import { UINT_128_MAX } from './uint256';
 
