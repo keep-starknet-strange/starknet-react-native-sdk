@@ -11,7 +11,7 @@ import {
   Uint256,
   Uint512,
 } from '@/types';
-import { CairoUint256 } from '../cairoDataTypes/uint256';
+import { CairoUint256 } from '@/utils/calldata/cairoDataTypes/uint256';
 
 // Intended for internal usage, maybe should be exported somewhere else and not exported to utils
 /**
