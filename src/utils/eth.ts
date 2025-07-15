@@ -4,7 +4,7 @@ import { addHexPrefix, buf2hex, removeHexPrefix, sanitizeHex } from './encode';
 import type { BigNumberish } from '../types';
 import { assertInRange, toHex } from './num';
 import { ZERO } from '../global/constants';
-import assert from './assert';
+import { assert } from './assert';
 
 /**
  * Get random Ethereum private Key.
