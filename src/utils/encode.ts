@@ -142,37 +142,30 @@ export function btoaUniversal(b: ArrayBuffer): string {
  * ```
  */
 export function buf2hex(buffer: Uint8Array): string {
-  return buffer.reduce((r, x) => r + x.toString(16).padStart(2, '0'), '');
+  return Array.from(buffer, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
- * Add hex prefix '0x' to hex-string
- * @param hex hex-string
- * @returns {string} The hex-string with 0x prefix
- *
- * @example
- * ```typescript
- * const hexString = '48656c6c6f';
- * const result = encode.addHexPrefix(hexString);
- * // result: "0x48656c6c6f"
- * ```
+ * Add hex prefix to string
  */
-export function addHexPrefix(hex: string): string {
-  return hex.startsWith('0x') ? hex : `0x${hex}`;
+export function addHexPrefix(str: string): string {
+  return str.startsWith('0x') ? str : `0x${str}`;
 }
 
 /**
- * Remove hex prefix '0x' from hex-string
- * @param hex hex-string
- * @returns {string} The hex-string
- *
- * @example
- * ```typescript
- * const hexStringWithPrefix = '0x48656c6c6f';
- * const result = encode.removeHexPrefix(hexStringWithPrefix);
- * // result: "48656c6c6f"
- * ```
+ * Remove hex prefix from string
  */
-export function removeHexPrefix(hex: string): string {
-  return hex.replace(/^0x/i, '');
+export function removeHexPrefix(str: string): string {
+  return str.startsWith('0x') ? str.slice(2) : str;
+}
+
+/**
+ * Sanitize hex string
+ */
+export function sanitizeHex(str: string): string {
+  const hex = str.replace(/^0x/i, '');
+  if (hex.length % 2 !== 0) {
+    return `0${hex}`;
+  }
+  return hex;
 }
