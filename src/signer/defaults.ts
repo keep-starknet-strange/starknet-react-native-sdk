@@ -11,26 +11,30 @@ import {
   V3DeclareSignerDetails,
   V3DeployAccountSignerDetails,
   V3InvocationsSignerDetails,
+  ETransactionVersion2,
+  ETransactionVersion3,
 } from '../types';
-import { ETransactionVersion2, ETransactionVersion3 } from '../types/api';
 import { CallData } from '../utils/calldata/CallData';
 import { starkCurve } from '../utils/ec/starkCurve';
-import { toHex } from '../utils/num';
+import { toHex, toBigInt } from '../utils/num';
 import {
   calculateDeclareTransactionHash,
   calculateDeployAccountTransactionHash,
   calculateInvokeTransactionHash,
 } from '../utils/hash/classHash';
-import { intDAM } from '../utils/stark';
-import { getExecuteCalldata } from '../utils/calldata/CallData';
 import { getMessageHash } from '../utils/typedData';
+import { intDAM } from '../utils/stark';
 import { SignerInterface } from './interface';
 
 export class Signer implements SignerInterface {
-  protected pk: Uint8Array | string;
+  private pk: string;
 
-  constructor(pk: Uint8Array | string) {
-    this.pk = pk instanceof Uint8Array ? toHex(pk) : toHex(pk);
+  constructor(pk: string | Uint8Array) {
+    if (pk instanceof Uint8Array) {
+      this.pk = '0x' + Array.from(pk, byte => byte.toString(16).padStart(2, '0')).join('');
+    } else {
+      this.pk = pk;
+    }
   }
 
   public async getPubKey(): Promise<string> {
@@ -39,93 +43,117 @@ export class Signer implements SignerInterface {
 
   public async signMessage(typedData: TypedData, accountAddress: string): Promise<Signature> {
     const msgHash = getMessageHash(typedData, accountAddress);
-    return this.signRaw(msgHash);
+    return starkCurve.sign(toBigInt(msgHash), toBigInt(this.pk));
   }
 
   public async signTransaction(
     transactions: Call[],
-    details: InvocationsSignerDetails
+    transactionsDetail: InvocationsSignerDetails
   ): Promise<Signature> {
-    const compiledCalldata = getExecuteCalldata(transactions, details.cairoVersion);
-    let msgHash;
-    if (Object.values(ETransactionVersion2).includes(details.version as any)) {
-      const det = details as V2InvocationsSignerDetails;
-      msgHash = calculateInvokeTransactionHash({
-        ...det,
-        senderAddress: det.walletAddress,
-        compiledCalldata,
-        version: det.version,
-      });
-    } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
-      const det = details as V3InvocationsSignerDetails;
-      msgHash = calculateInvokeTransactionHash({
-        ...det,
-        senderAddress: det.walletAddress,
-        compiledCalldata,
-        version: det.version,
-        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
-        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
-      });
-    } else {
-      throw Error('unsupported signTransaction version');
-    }
-    return this.signRaw(msgHash as string);
-  }
+    const compiledCalldata = CallData.getExecuteCalldata(transactions, transactionsDetail.cairoVersion);
+    let msgHash: string;
 
-  public async signDeployAccountTransaction(
-    details: DeployAccountSignerDetails
-  ): Promise<Signature> {
-    const compiledConstructorCalldata = CallData.compile(details.constructorCalldata);
-    let msgHash;
-    if (Object.values(ETransactionVersion2).includes(details.version as any)) {
-      const det = details as V2DeployAccountSignerDetails;
-      msgHash = calculateDeployAccountTransactionHash({
-        ...det,
-        salt: det.addressSalt,
-        constructorCalldata: compiledConstructorCalldata,
+    if (transactionsDetail.version === ETransactionVersion2.V2) {
+      const det = transactionsDetail as V2InvocationsSignerDetails;
+      msgHash = calculateInvokeTransactionHash({
+        senderAddress: det.walletAddress,
+        calldata: compiledCalldata,
+        maxFee: det.maxFee,
         version: det.version,
-      });
-    } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
-      const det = details as V3DeployAccountSignerDetails;
-      msgHash = calculateDeployAccountTransactionHash({
-        ...det,
-        salt: det.addressSalt,
-        compiledConstructorCalldata,
-        version: det.version,
-        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
-        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
+        chainId: det.chainId,
+        nonce: det.nonce,
       });
     } else {
-      throw Error('unsupported signDeployAccountTransaction version');
+      const det = transactionsDetail as V3InvocationsSignerDetails;
+      msgHash = calculateInvokeTransactionHash({
+        senderAddress: det.walletAddress,
+        calldata: compiledCalldata,
+        maxFee: det.maxFee,
+        version: det.version,
+        chainId: det.chainId,
+        nonce: det.nonce,
+        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
+        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
+        resourceBounds: det.resourceBounds,
+        tip: det.tip,
+        paymasterData: det.paymasterData?.map(p => p.toString()),
+        accountDeploymentData: det.accountDeploymentData?.map(p => p.toString()),
+      });
     }
-    return this.signRaw(msgHash as string);
+
+    return starkCurve.sign(toBigInt(msgHash), toBigInt(this.pk));
   }
 
   public async signDeclareTransaction(
-    details: DeclareSignerDetails
+    transaction: DeclareSignerDetails
   ): Promise<Signature> {
-    let msgHash;
-    if (Object.values(ETransactionVersion2).includes(details.version as any)) {
-      const det = details as V2DeclareSignerDetails;
+    let msgHash: string;
+
+    if (transaction.version === ETransactionVersion2.V2) {
+      const det = transaction as V2DeclareSignerDetails;
       msgHash = calculateDeclareTransactionHash({
-        ...det,
+        senderAddress: det.senderAddress,
+        classHash: det.classHash,
         version: det.version,
-      });
-    } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
-      const det = details as V3DeclareSignerDetails;
-      msgHash = calculateDeclareTransactionHash({
-        ...det,
-        version: det.version,
-        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
-        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
+        maxFee: det.maxFee,
+        nonce: det.nonce,
       });
     } else {
-      throw Error('unsupported signDeclareTransaction version');
+      const det = transaction as V3DeclareSignerDetails;
+      msgHash = calculateDeclareTransactionHash({
+        senderAddress: det.senderAddress,
+        classHash: det.classHash,
+        compiledClassHash: det.compiledClassHash,
+        version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
+        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
+        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
+        resourceBounds: det.resourceBounds,
+        tip: det.tip,
+        paymasterData: det.paymasterData?.map(p => p.toString()),
+        accountDeploymentData: det.accountDeploymentData?.map(p => p.toString()),
+      });
     }
-    return this.signRaw(msgHash as string);
+
+    return starkCurve.sign(toBigInt(msgHash), toBigInt(this.pk));
   }
 
-  protected async signRaw(msgHash: string): Promise<Signature> {
-    return starkCurve.sign(msgHash, this.pk);
+  public async signDeployAccountTransaction(
+    transaction: DeployAccountSignerDetails
+  ): Promise<Signature> {
+    let msgHash: string;
+
+    if (transaction.version === ETransactionVersion2.V2) {
+      const det = transaction as V2DeployAccountSignerDetails;
+      msgHash = calculateDeployAccountTransactionHash({
+        contractAddress: det.contractAddress,
+        classHash: det.classHash,
+        constructorCalldata: det.constructorCalldata.map(c => c.toString()),
+        salt: det.addressSalt,
+        version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
+      });
+    } else {
+      const det = transaction as V3DeployAccountSignerDetails;
+      msgHash = calculateDeployAccountTransactionHash({
+        contractAddress: det.contractAddress,
+        classHash: det.classHash,
+        constructorCalldata: det.constructorCalldata.map(c => c.toString()),
+        salt: det.addressSalt,
+        version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
+        nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
+        feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
+        resourceBounds: det.resourceBounds,
+        tip: det.tip,
+        paymasterData: det.paymasterData?.map(p => p.toString()),
+        accountDeploymentData: det.accountDeploymentData?.map(p => p.toString()),
+      });
+    }
+
+    return starkCurve.sign(toBigInt(msgHash), toBigInt(this.pk));
   }
 } 
