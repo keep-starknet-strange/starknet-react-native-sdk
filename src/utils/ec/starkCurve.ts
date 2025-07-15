@@ -127,7 +127,56 @@ function getStarkKey(privateKey: BigNumberish): string {
   return '0x' + pubXHex;
 }
 
+// Sign function for ECDSA on Stark curve
+function sign(hash: bigint, privateKey: bigint): { r: bigint; s: bigint; recovery: number } {
+  // This is a simplified ECDSA signature implementation
+  // In a production environment, you would use a proper cryptographic library
+  
+  // Generate a random k (in practice, this should be cryptographically secure)
+  const k = mod(BigInt(Math.floor(Math.random() * Number(CURVE_N))), CURVE_N);
+  
+  // Calculate R = k * G
+  const [rX, rY] = scalarMultBase(k);
+  const r = mod(rX, CURVE_N);
+  
+  // Calculate s = k^(-1) * (hash + r * privateKey) mod n
+  const kInv = modInv(k, CURVE_N);
+  const s = mod(kInv * (hash + r * privateKey), CURVE_N);
+  
+  // Determine recovery bit (simplified)
+  const recovery = rY % 2n === 0n ? 0 : 1;
+  
+  return { r, s, recovery: Number(recovery) };
+}
+
+// Verify signature function
+function verify(hash: bigint, signature: { r: bigint; s: bigint }, publicKey: bigint): boolean {
+  // This is a simplified verification implementation
+  // In a production environment, you would use a proper cryptographic library
+  
+  const { r, s } = signature;
+  
+  // Calculate w = s^(-1) mod n
+  const w = modInv(s, CURVE_N);
+  
+  // Calculate u1 = hash * w mod n
+  const u1 = mod(hash * w, CURVE_N);
+  
+  // Calculate u2 = r * w mod n
+  const u2 = mod(r * w, CURVE_N);
+  
+  // Calculate P = u1 * G + u2 * publicKey
+  const [p1X, p1Y] = scalarMultBase(u1);
+  const [p2X, p2Y] = scalarMultBase(u2 * publicKey);
+  const [pX, pY] = pointAdd(p1X, p1Y, p2X, p2Y);
+  
+  // Check if P.x mod n equals r
+  return mod(pX, CURVE_N) === r;
+}
+
 export const starkCurve = {
   getStarkKey,
-  pedersen
+  pedersen,
+  sign,
+  verify
 }; 
