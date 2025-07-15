@@ -8,11 +8,9 @@ import {
   Literal,
   NON_ZERO_PREFIX,
   Uint,
-  Uint256,
   Uint512,
 } from '../../../types';
-import {CairoUint256} from '../../cairoDataTypes';
-
+import { CairoUint256 } from '../../cairoDataTypes';
 
 
 // Intended for internal usage, maybe should be exported somewhere else and not exported to utils
@@ -242,7 +240,7 @@ export function getAbiContractVersion(abi: Abi): ContractVersion {
  * uint256('892349863487563453485768723498');
  * ```
  */
-export const uint256 = (_it: BigNumberish): Uint256 => {
+export const uint256 = (_it: BigNumberish): { type: 'struct'; members: any[] } => {
   return { type: 'struct', members: [] };
 };
 
@@ -255,7 +253,7 @@ export const uint256 = (_it: BigNumberish): Uint256 => {
  * uint512('345745685892349863487563453485768723498');
  * ```
  */
-export const uint512 = (_it: BigNumberish): Uint512 => {
+export const uint512 = (_it: BigNumberish): { type: 'struct'; members: any[] } => {
   return { type: 'struct', members: [] };
 };
 
