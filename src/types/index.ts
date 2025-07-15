@@ -35,6 +35,18 @@ export interface InvocationsSignerDetails {
 }
 
 // Transaction version types
+// ETransactionVersion for compatibility with existing code
+export const ETransactionVersion = {
+  V0: '0x0',
+  V1: '0x1',
+  V2: '0x2',
+  V3: '0x3',
+  F0: '0x100000000000000000000000000000000',
+  F1: '0x100000000000000000000000000000001',
+  F2: '0x100000000000000000000000000000002',
+  F3: '0x100000000000000000000000000000003',
+} as const;
+
 export const ETransactionVersion2 = {
   V2: '0x2',
 } as const;
@@ -43,6 +55,7 @@ export const ETransactionVersion3 = {
   V3: '0x3',
 } as const;
 
+export type ETransactionVersion = ValuesType<typeof ETransactionVersion>;
 export type ETransactionVersion2 = ValuesType<typeof ETransactionVersion2>;
 export type ETransactionVersion3 = ValuesType<typeof ETransactionVersion3>;
 
@@ -517,4 +530,73 @@ export interface StarknetEvent {
   data?: unknown
 }
 
-export type EventListener = (event: StarknetEvent) => void 
+export type EventListener = (event: StarknetEvent) => void
+
+// Response types for provider operations
+export interface GetBlockResponse {
+  status: 'PENDING' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_L1' | 'REJECTED';
+  block_hash?: string;
+  parent_hash: string;
+  block_number?: number;
+  new_root: string;
+  timestamp: number;
+  sequencer_address: string;
+  transactions: any[];
+  version?: string;
+}
+
+export interface PendingBlock {
+  status: 'PENDING';
+  parent_hash: string;
+  new_root: string;
+  timestamp: number;
+  sequencer_address: string;
+  transactions: any[];
+  version?: string;
+}
+
+export interface GetTransactionReceiptResponse {
+  transaction_hash: string;
+  actual_fee?: string;
+  finality_status?: string;
+  execution_status?: string;
+  block_hash?: string;
+  block_number?: number;
+  type?: string;
+  messages_sent?: any[];
+  events?: any[];
+  contract_address?: string;
+  revert_reason?: string;
+}
+
+export interface StateUpdateResponse {
+  block_hash?: string;
+  new_root: string;
+  old_root: string;
+  state_diff: any;
+}
+
+export interface PendingStateUpdate {
+  new_root: string;
+  old_root: string;
+  state_diff: any;
+}
+
+export interface V3TransactionDetails {
+  nonce: BigNumberish;
+  version: ETransactionVersion3;
+  maxFee: BigNumberish;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  resourceBounds: ResourceBounds;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+export interface InvocationsDetailsWithNonce {
+  nonce: BigNumberish;
+  maxFee?: string;
+  version?: string;
+  cairoVersion?: string;
+} 
