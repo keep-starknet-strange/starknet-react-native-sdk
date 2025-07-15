@@ -68,6 +68,7 @@ export class EthSigner implements SignerInterface {
       msgHash = calculateInvokeTransactionHash({
         ...det,
         senderAddress: det.walletAddress,
+        calldata: compiledCalldata,
         compiledCalldata,
         version: det.version,
       });
@@ -76,6 +77,7 @@ export class EthSigner implements SignerInterface {
       msgHash = calculateInvokeTransactionHash({
         ...det,
         senderAddress: det.walletAddress,
+        calldata: compiledCalldata,
         compiledCalldata,
         version: det.version,
         nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
@@ -99,18 +101,24 @@ export class EthSigner implements SignerInterface {
     if (Object.values(ETransactionVersion2).includes(details.version as any)) {
       const det = details as V2DeployAccountSignerDetails;
       msgHash = calculateDeployAccountTransactionHash({
-        ...det,
-        salt: det.addressSalt,
+        contractAddress: det.contractAddress,
+        classHash: det.classHash,
         constructorCalldata: compiledConstructorCalldata,
+        salt: det.addressSalt,
         version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
       });
     } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
       const det = details as V3DeployAccountSignerDetails;
       msgHash = calculateDeployAccountTransactionHash({
-        ...det,
+        contractAddress: det.contractAddress,
+        classHash: det.classHash,
+        constructorCalldata: compiledConstructorCalldata,
         salt: det.addressSalt,
-        compiledConstructorCalldata,
         version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
         nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
         feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
       });
@@ -131,14 +139,21 @@ export class EthSigner implements SignerInterface {
     if (Object.values(ETransactionVersion2).includes(details.version as any)) {
       const det = details as V2DeclareSignerDetails;
       msgHash = calculateDeclareTransactionHash({
-        ...det,
+        senderAddress: det.senderAddress,
+        classHash: det.classHash,
         version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
       });
     } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
       const det = details as V3DeclareSignerDetails;
       msgHash = calculateDeclareTransactionHash({
-        ...det,
+        senderAddress: det.senderAddress,
+        classHash: det.classHash,
+        compiledClassHash: det.compiledClassHash,
         version: det.version,
+        maxFee: det.maxFee,
+        nonce: det.nonce,
         nonceDataAvailabilityMode: intDAM(det.nonceDataAvailabilityMode),
         feeDataAvailabilityMode: intDAM(det.feeDataAvailabilityMode),
       });
