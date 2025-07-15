@@ -1,6 +1,182 @@
 // Type definitions based on Starknet.js (without importing external packages)
+import { ValuesType } from './helpers/valuesType';
+
 export type BigNumberish = string | number | bigint;
 export type RawArgs = Record<string, any>;
+
+// Additional types for Account and Signer
+export type AllowArray<T> = T | T[];
+export type Nonce = BigNumberish;
+export type BlockIdentifier = string | number;
+export type CairoVersion = '0' | '1';
+
+// Signature types
+export type Signature = string[] | { r: bigint; s: bigint; recovery?: number };
+export type ArraySignatureType = string[];
+
+// TypedData interface
+export interface TypedData {
+  types: Record<string, any[]>;
+  primaryType: string;
+  domain: Record<string, any>;
+  message: Record<string, any>;
+}
+
+// InvocationsSignerDetails interface
+export interface InvocationsSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: any;
+}
+
+// Transaction version types
+// ETransactionVersion for compatibility with existing code
+export const ETransactionVersion = {
+  V0: '0x0',
+  V1: '0x1',
+  V2: '0x2',
+  V3: '0x3',
+  F0: '0x100000000000000000000000000000000',
+  F1: '0x100000000000000000000000000000001',
+  F2: '0x100000000000000000000000000000002',
+  F3: '0x100000000000000000000000000000003',
+} as const;
+
+export const ETransactionVersion2 = {
+  V2: '0x2',
+} as const;
+
+export const ETransactionVersion3 = {
+  V3: '0x3',
+} as const;
+
+export type ETransactionVersion = ValuesType<typeof ETransactionVersion>;
+export type ETransactionVersion2 = ValuesType<typeof ETransactionVersion2>;
+export type ETransactionVersion3 = ValuesType<typeof ETransactionVersion3>;
+
+// Data availability mode
+export type EDataAvailabilityMode = 'L1' | 'L2';
+
+// Resource bounds
+export interface ResourceBounds {
+  l1_gas: ResourceBound;
+  l2_gas: ResourceBound;
+}
+
+export interface ResourceBound {
+  max_amount: BigNumberish;
+  max_price_per_unit: BigNumberish;
+}
+
+// Uint256 type for signer operations (used by EthSigner)
+export interface Uint256 {
+  low: BigNumberish;
+  high: BigNumberish;
+}
+
+// Legacy Uint256 type for compatibility
+export interface Uint256Legacy {
+  type: 'struct';
+  members: any[];
+}
+
+// Cairo Uint256 type for ABI operations
+export interface CairoUint256 {
+  type: 'struct';
+  members: any[];
+}
+
+// Uint512 type for signer operations
+export interface Uint512 {
+  low: BigNumberish;
+  high: BigNumberish;
+}
+
+// Legacy Uint512 type for compatibility
+export interface Uint512Legacy {
+  type: 'struct';
+  members: any[];
+}
+
+// Signer details types
+export interface DeclareSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: ResourceBounds;
+  classHash: string;
+  compiledClassHash?: string;
+  senderAddress: string;
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+export interface DeployAccountSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: ResourceBounds;
+  classHash: string;
+  contractAddress: string;
+  addressSalt: BigNumberish;
+  constructorCalldata: BigNumberish[];
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+// V2 and V3 specific types
+export interface V2DeclareSignerDetails extends DeclareSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3DeclareSignerDetails extends DeclareSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+}
+
+export interface V2DeployAccountSignerDetails extends DeployAccountSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3DeployAccountSignerDetails extends DeployAccountSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+}
+
+export interface V2InvocationsSignerDetails extends InvocationsSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3InvocationsSignerDetails extends InvocationsSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+  resourceBounds: ResourceBounds;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
 
 // Cairo types
 export type Abi = any[];
@@ -24,14 +200,28 @@ export enum Uint {
   u256 = 'core::integer::u256'
 }
 
-export interface Uint256 {
+// Legacy Uint256 type for Cairo ABI operations
+export interface Uint256Legacy {
   type: 'struct';
   members: any[];
 }
 
-export interface Uint512 {
+// Legacy Uint512 type for Cairo ABI operations
+export interface Uint512Legacy {
   type: 'struct';
   members: any[];
+}
+
+// Additional types for stark utils
+export type CompressedProgram = string;
+export type Program = any;
+export interface UniversalDetails {
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  resourceBounds?: ResourceBounds;
 }
 
 // Basic Starknet types (standalone definitions)
@@ -340,4 +530,73 @@ export interface StarknetEvent {
   data?: unknown
 }
 
-export type EventListener = (event: StarknetEvent) => void 
+export type EventListener = (event: StarknetEvent) => void
+
+// Response types for provider operations
+export interface GetBlockResponse {
+  status: 'PENDING' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_L1' | 'REJECTED';
+  block_hash?: string;
+  parent_hash: string;
+  block_number?: number;
+  new_root: string;
+  timestamp: number;
+  sequencer_address: string;
+  transactions: any[];
+  version?: string;
+}
+
+export interface PendingBlock {
+  status: 'PENDING';
+  parent_hash: string;
+  new_root: string;
+  timestamp: number;
+  sequencer_address: string;
+  transactions: any[];
+  version?: string;
+}
+
+export interface GetTransactionReceiptResponse {
+  transaction_hash: string;
+  actual_fee?: string;
+  finality_status?: string;
+  execution_status?: string;
+  block_hash?: string;
+  block_number?: number;
+  type?: string;
+  messages_sent?: any[];
+  events?: any[];
+  contract_address?: string;
+  revert_reason?: string;
+}
+
+export interface StateUpdateResponse {
+  block_hash?: string;
+  new_root: string;
+  old_root: string;
+  state_diff: any;
+}
+
+export interface PendingStateUpdate {
+  new_root: string;
+  old_root: string;
+  state_diff: any;
+}
+
+export interface V3TransactionDetails {
+  nonce: BigNumberish;
+  version: ETransactionVersion3;
+  maxFee: BigNumberish;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  resourceBounds: ResourceBounds;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+export interface InvocationsDetailsWithNonce {
+  nonce: BigNumberish;
+  maxFee?: string;
+  version?: string;
+  cairoVersion?: string;
+} 
