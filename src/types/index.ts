@@ -199,6 +199,18 @@ export interface Uint512Legacy {
   members: any[];
 }
 
+// Additional types for stark utils
+export type CompressedProgram = string;
+export type Program = any;
+export interface UniversalDetails {
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  resourceBounds?: ResourceBounds;
+}
+
 // Basic Starknet types (standalone definitions)
 export interface Account {
   address: string;
