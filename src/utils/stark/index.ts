@@ -211,7 +211,11 @@ export function estimatedFeeToMaxFee(
  */
 export function estimateFeeToBounds(
   estimate: FeeEstimate | 0n,
-  overhead: ResourceBoundsOverhead = config.get('feeMarginPercentage').bounds,
+  overhead: ResourceBoundsOverhead = {
+    l1_gas: { max_amount: 0, max_price_per_unit: 0 },
+    l2_gas: { max_amount: 0, max_price_per_unit: 0 },
+    l1_data_gas: { max_amount: 0, max_price_per_unit: 0 },
+  },
   specVersion?: SupportedRpcVersion
 ): ResourceBounds {
   if (isBigInt(estimate)) {
