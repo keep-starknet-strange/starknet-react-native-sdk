@@ -32,7 +32,7 @@ import { toHex } from './num';
  * // result = true
  * ```
  */
-export function isV3Tx(details: InvocationsDetailsWithNonce): details is V3TransactionDetails {
+export function isV3Tx(details: InvocationsDetailsWithNonce): boolean {
   const version = details.version ? toHex(details.version) : ETransactionVersion.V3;
   return version === ETransactionVersion.V3 || version === ETransactionVersion.F3;
 }
