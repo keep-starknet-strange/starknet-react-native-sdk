@@ -11,8 +11,6 @@ import {
   Uint512,
 } from '../../../types';
 import { CairoUint256 } from '../../cairoDataTypes';
-import { CairoEnum } from '../../cairoEnum';
-import { ValuesType } from '../../helpers/valuesType';
 
 
 // Intended for internal usage, maybe should be exported somewhere else and not exported to utils
