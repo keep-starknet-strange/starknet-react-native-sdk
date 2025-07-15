@@ -123,3 +123,8 @@ export const DEFAULT_CONFIG = {
     'Accept': 'application/json',
   },
 } as const;
+
+// Export constants in the format expected by starknet package
+export const constants = {
+  StarknetChainId: _StarknetChainId
+} as const;
