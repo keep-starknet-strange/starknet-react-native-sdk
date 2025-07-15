@@ -1,3 +1,3 @@
-export * from './interface';
-export * from './default';
-export * from './ethSigner'; 
+export { Signer } from './defaults';
+export { EthSigner } from './ethSigner';
+export type { SignerInterface } from './interface'; 
