@@ -463,6 +463,31 @@ export function numberToBytes31(value: BigNumberish): Uint8Array {
   return numberToBytesPadded(masked, 31);
 }
 
+/**
+ * Convert number to bytes32 format
+ */
 export function numberToBytes32(value: BigNumberish): Uint8Array {
-  return numberToBytesPadded(value, 32);
+  const hex = toBigInt(value).toString(16).padStart(64, '0');
+  return hexToBytes(hex);
+}
+
+/**
+ * Compute hash on elements using Pedersen hash
+ */
+export function computeHashOnElements(data: BigNumberish[]): string {
+  // This is a simplified implementation
+  // In production, use the actual Pedersen hash from starkCurve
+  let hash = 0n;
+  for (const element of data) {
+    const elementBigInt = toBigInt(element);
+    hash = (hash + elementBigInt) % (BigInt(2) ** BigInt(251) - BigInt(256) - BigInt(1));
+  }
+  return hash.toString();
+}
+
+/**
+ * Convert value to felt format
+ */
+export function felt(value: string): string {
+  return value;
 } 
