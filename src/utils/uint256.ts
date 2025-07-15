@@ -47,5 +47,9 @@ export function isUint256(bn: BigNumberish): boolean {
  * ```
  */
 export function bnToUint256(bn: BigNumberish): Uint256 {
-  return new CairoUint256(bn).toUint256HexString();
+  const cairoUint256 = new CairoUint256(bn);
+  return {
+    low: cairoUint256.low.toString(),
+    high: cairoUint256.high.toString(),
+  };
 }
