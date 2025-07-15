@@ -1,6 +1,6 @@
 /** Implementation for RPC 0.7 */
+import * as RPCSPEC07 from '../../provider/types/spec.type';
 import { ResourceBoundsOverheadRPC07 } from '../../provider/types/spec.type';
-import { RPCSPEC07 } from '../../types/api';
 import { addPercent, toHex } from '../num';
 
 export function estimateFeeToBounds(
@@ -11,12 +11,12 @@ export function estimateFeeToBounds(
     estimate.data_gas_consumed !== undefined && estimate.data_gas_price !== undefined
       ? toHex(
           addPercent(
-            BigInt(estimate.overall_fee) / BigInt(estimate.gas_price),
+            BigInt(estimate.overall_fee) / BigInt(estimate.gas_price ?? '0'),
             overhead.l1_gas.max_amount
           )
         )
-      : toHex(addPercent(estimate.gas_consumed, overhead.l1_gas.max_amount));
-  const maxUnitPrice = toHex(addPercent(estimate.gas_price, overhead.l1_gas.max_price_per_unit));
+      : toHex(addPercent(BigInt(estimate.gas_consumed ?? '0'), overhead.l1_gas.max_amount));
+  const maxUnitPrice = toHex(addPercent(BigInt(estimate.gas_price ?? '0'), overhead.l1_gas.max_price_per_unit));
 
   return {
     l2_gas: { max_amount: '0x0', max_price_per_unit: '0x0' },
