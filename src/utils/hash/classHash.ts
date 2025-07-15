@@ -2,24 +2,11 @@
  * Limited Class Hash for RN
  */
 
-import { BigNumberish, RawArgs } from '../../types';
-import { ADDR_BOUND } from '../../global/constants';
-import { isString, parse } from '../assert';
-import { starkCurve } from '../ec/starkCurve';
+import { BigNumberish, RawArgs } from '../../types/lib';
+import { CallData } from '../calldata/CallData';
+import { computeHashOnElements, felt, toHex } from '../num';
 
-// Simple utility functions
-function toHex(value: bigint): string {
-  return '0x' + value.toString(16);
-}
-
-function felt(value: string): string {
-  return value;
-}
-
-function CallData_compile(data: RawArgs): string[] {
-  // Simplified CallData compilation
-  return Object.entries(data).map(([_key, value]) => value?.toString() || '0');
-}
+const ADDR_BOUND = BigInt(2) ** BigInt(251) - BigInt(256) - BigInt(1);
 
 /**
  * Calculate contract address from class hash
@@ -36,7 +23,7 @@ export function calculateContractAddressFromHash(
   constructorCalldata: RawArgs,
   deployerAddress: BigNumberish
 ): string {
-  const compiledCalldata = CallData_compile(constructorCalldata);
+  const compiledCalldata = CallData.compile(constructorCalldata);
   const constructorCalldataHash = computeHashOnElements(compiledCalldata);
 
   const CONTRACT_ADDRESS_PREFIX = felt('0x535441524b4e45545f434f4e54524143545f41444452455353');
@@ -52,23 +39,193 @@ export function calculateContractAddressFromHash(
 }
 
 /**
- * Compute hash on elements using Pedersen hash
+ * Calculate invoke transaction hash
  */
-export function computeHashOnElements(data: BigNumberish[]): string {
-  return [...data, data.length]
-    .reduce((x: BigNumberish, y: BigNumberish) => starkCurve.pedersen(BigInt(x), BigInt(y)), 0)
-    .toString();
+export function calculateInvokeTransactionHash(params: {
+  senderAddress: string;
+  calldata: string[];
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  nonce: BigNumberish;
+  compiledCalldata?: string[];
+  nonceDataAvailabilityMode?: number;
+  feeDataAvailabilityMode?: number;
+  resourceBounds?: any;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}): string {
+  const {
+    senderAddress,
+    calldata,
+    maxFee,
+    version,
+    chainId,
+    nonce,
+    compiledCalldata,
+    nonceDataAvailabilityMode,
+    feeDataAvailabilityMode,
+    resourceBounds,
+    tip,
+    paymasterData,
+    accountDeploymentData,
+  } = params;
+
+  const calldataHash = computeHashOnElements(compiledCalldata || calldata);
+  
+  const elements = [
+    senderAddress,
+    nonce,
+    calldataHash,
+    maxFee,
+    version,
+    chainId,
+  ];
+
+  // Add V3 specific fields if present
+  if (version === '0x3') {
+    if (resourceBounds) {
+      elements.push(
+        resourceBounds.l1_gas.max_amount,
+        resourceBounds.l1_gas.max_price_per_unit,
+        resourceBounds.l2_gas.max_amount,
+        resourceBounds.l2_gas.max_price_per_unit
+      );
+    }
+    if (tip !== undefined) elements.push(tip);
+    if (paymasterData) elements.push(...paymasterData);
+    if (accountDeploymentData) elements.push(...accountDeploymentData);
+    if (nonceDataAvailabilityMode !== undefined) elements.push(nonceDataAvailabilityMode);
+    if (feeDataAvailabilityMode !== undefined) elements.push(feeDataAvailabilityMode);
+  }
+
+  return toHex(computeHashOnElements(elements));
 }
 
 /**
- * Simplified contract class hash computation
+ * Calculate deploy account transaction hash
  */
-export function computeContractClassHash(contract: any | string): string {
-  const compiledContract = isString(contract) ? parse(contract) : contract;
+export function calculateDeployAccountTransactionHash(params: {
+  contractAddress: string;
+  classHash: string;
+  constructorCalldata: string[];
+  salt: BigNumberish;
+  version: string;
+  maxFee: BigNumberish;
+  nonce: BigNumberish;
+  nonceDataAvailabilityMode?: number;
+  feeDataAvailabilityMode?: number;
+  resourceBounds?: any;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}): string {
+  const {
+    contractAddress,
+    classHash,
+    constructorCalldata,
+    salt,
+    version,
+    maxFee,
+    nonce,
+    nonceDataAvailabilityMode,
+    feeDataAvailabilityMode,
+    resourceBounds,
+    tip,
+    paymasterData,
+    accountDeploymentData,
+  } = params;
+
+  const constructorCalldataHash = computeHashOnElements(constructorCalldata);
   
-  // For now, return a simplified hash
-  // In a full implementation, this would compute the actual class hash
-  const contractString = JSON.stringify(compiledContract);
-  const hash = starkCurve.pedersen(BigInt(contractString.length), BigInt(contractString.charCodeAt(0)));
-  return '0x' + hash.replace('0x', '');
+  const elements = [
+    contractAddress,
+    classHash,
+    constructorCalldataHash,
+    salt,
+    version,
+    maxFee,
+    nonce,
+  ];
+
+  // Add V3 specific fields if present
+  if (version === '0x3') {
+    if (resourceBounds) {
+      elements.push(
+        resourceBounds.l1_gas.max_amount,
+        resourceBounds.l1_gas.max_price_per_unit,
+        resourceBounds.l2_gas.max_amount,
+        resourceBounds.l2_gas.max_price_per_unit
+      );
+    }
+    if (tip !== undefined) elements.push(tip);
+    if (paymasterData) elements.push(...paymasterData);
+    if (accountDeploymentData) elements.push(...accountDeploymentData);
+    if (nonceDataAvailabilityMode !== undefined) elements.push(nonceDataAvailabilityMode);
+    if (feeDataAvailabilityMode !== undefined) elements.push(feeDataAvailabilityMode);
+  }
+
+  return toHex(computeHashOnElements(elements));
+}
+
+/**
+ * Calculate declare transaction hash
+ */
+export function calculateDeclareTransactionHash(params: {
+  senderAddress: string;
+  classHash: string;
+  compiledClassHash?: string;
+  version: string;
+  maxFee: BigNumberish;
+  nonce: BigNumberish;
+  nonceDataAvailabilityMode?: number;
+  feeDataAvailabilityMode?: number;
+  resourceBounds?: any;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}): string {
+  const {
+    senderAddress,
+    classHash,
+    compiledClassHash,
+    version,
+    maxFee,
+    nonce,
+    nonceDataAvailabilityMode,
+    feeDataAvailabilityMode,
+    resourceBounds,
+    tip,
+    paymasterData,
+    accountDeploymentData,
+  } = params;
+
+  const elements = [
+    senderAddress,
+    classHash,
+    version,
+    maxFee,
+    nonce,
+  ];
+
+  // Add V3 specific fields if present
+  if (version === '0x3') {
+    if (compiledClassHash) elements.push(compiledClassHash);
+    if (resourceBounds) {
+      elements.push(
+        resourceBounds.l1_gas.max_amount,
+        resourceBounds.l1_gas.max_price_per_unit,
+        resourceBounds.l2_gas.max_amount,
+        resourceBounds.l2_gas.max_price_per_unit
+      );
+    }
+    if (tip !== undefined) elements.push(tip);
+    if (paymasterData) elements.push(...paymasterData);
+    if (accountDeploymentData) elements.push(...accountDeploymentData);
+    if (nonceDataAvailabilityMode !== undefined) elements.push(nonceDataAvailabilityMode);
+    if (feeDataAvailabilityMode !== undefined) elements.push(feeDataAvailabilityMode);
+  }
+
+  return toHex(computeHashOnElements(elements));
 }
