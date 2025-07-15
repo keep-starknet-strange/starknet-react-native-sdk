@@ -1,6 +1,157 @@
 // Type definitions based on Starknet.js (without importing external packages)
+import { ValuesType } from './helpers/valuesType';
+
 export type BigNumberish = string | number | bigint;
 export type RawArgs = Record<string, any>;
+
+// Additional types for Account and Signer
+export type AllowArray<T> = T | T[];
+export type Nonce = BigNumberish;
+export type BlockIdentifier = string | number;
+export type CairoVersion = '0' | '1';
+
+// Signature types
+export type Signature = string[] | { r: bigint; s: bigint; recovery?: number };
+export type ArraySignatureType = string[];
+
+// TypedData interface
+export interface TypedData {
+  types: Record<string, any[]>;
+  primaryType: string;
+  domain: Record<string, any>;
+  message: Record<string, any>;
+}
+
+// InvocationsSignerDetails interface
+export interface InvocationsSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: any;
+}
+
+// Transaction version types
+export const ETransactionVersion2 = {
+  V2: '0x2',
+} as const;
+
+export const ETransactionVersion3 = {
+  V3: '0x3',
+} as const;
+
+export type ETransactionVersion2 = ValuesType<typeof ETransactionVersion2>;
+export type ETransactionVersion3 = ValuesType<typeof ETransactionVersion3>;
+
+// Data availability mode
+export type EDataAvailabilityMode = 'L1' | 'L2';
+
+// Resource bounds
+export interface ResourceBounds {
+  l1_gas: ResourceBound;
+  l2_gas: ResourceBound;
+}
+
+export interface ResourceBound {
+  max_amount: BigNumberish;
+  max_price_per_unit: BigNumberish;
+}
+
+// Uint256 type for signer operations
+export interface Uint256 {
+  low: BigNumberish;
+  high: BigNumberish;
+}
+
+// Legacy Uint256 type for compatibility
+export interface Uint256Legacy {
+  type: 'struct';
+  members: any[];
+}
+
+// Cairo Uint256 type
+export interface CairoUint256 {
+  type: 'struct';
+  members: any[];
+}
+
+// Signer details types
+export interface DeclareSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: ResourceBounds;
+  classHash: string;
+  compiledClassHash?: string;
+  senderAddress: string;
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+export interface DeployAccountSignerDetails {
+  walletAddress: string;
+  nonce: BigNumberish;
+  maxFee: BigNumberish;
+  version: string;
+  chainId: string;
+  cairoVersion?: CairoVersion;
+  skipValidate?: boolean;
+  resourceBounds?: ResourceBounds;
+  classHash: string;
+  contractAddress: string;
+  addressSalt: BigNumberish;
+  constructorCalldata: BigNumberish[];
+  nonceDataAvailabilityMode?: EDataAvailabilityMode;
+  feeDataAvailabilityMode?: EDataAvailabilityMode;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
+
+// V2 and V3 specific types
+export interface V2DeclareSignerDetails extends DeclareSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3DeclareSignerDetails extends DeclareSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+}
+
+export interface V2DeployAccountSignerDetails extends DeployAccountSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3DeployAccountSignerDetails extends DeployAccountSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+}
+
+export interface V2InvocationsSignerDetails extends InvocationsSignerDetails {
+  version: ETransactionVersion2;
+}
+
+export interface V3InvocationsSignerDetails extends InvocationsSignerDetails {
+  version: ETransactionVersion3;
+  nonceDataAvailabilityMode: EDataAvailabilityMode;
+  feeDataAvailabilityMode: EDataAvailabilityMode;
+  resourceBounds: ResourceBounds;
+  tip?: BigNumberish;
+  paymasterData?: BigNumberish[];
+  accountDeploymentData?: BigNumberish[];
+}
 
 // Cairo types
 export type Abi = any[];
