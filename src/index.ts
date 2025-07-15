@@ -20,17 +20,18 @@ export {CallData} from './utils/calldata/CallData'
 import {RpcProvider} from './core/rpc-provider'
 import {starkCurve} from './utils/ec/starkCurve'
 import {calculateContractAddressFromHash} from './utils/hash/classHash'
-import {StarknetChainId} from './global/constants'
+import {StarknetChainId, constants} from './global/constants'
+import {TypedData} from './types/typedData'
 // TO DO ADD ACCOUNT
 // Export components for compatibility with starknet package format
-export {Account}
 export {RpcProvider}
 export {starkCurve}
 export {calculateContractAddressFromHash}
 export {StarknetChainId}
+export type {TypedData}
 
 // Export in the format expected by starknet package
-export const constants = { StarknetChainId };
+export {constants}
 export const ec = { starkCurve };
 export const hash = { calculateContractAddressFromHash };
 
