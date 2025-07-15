@@ -7,14 +7,16 @@ import { SupportedRpcVersion, ZERO } from '../../global/constants';
 import { FeeEstimate } from '../../provider/types/index.type';
 import {
   EDAMode,
-  EDataAvailabilityMode,
-  ETransactionVersion,
   isRPC08_FeeEstimate,
-  ResourceBounds,
   ResourceBoundsOverhead,
   ResourceBoundsOverheadRPC07,
   ResourceBoundsOverheadRPC08,
 } from '../../provider/types/spec.type';
+import {
+  EDataAvailabilityMode,
+  ETransactionVersion,
+  ResourceBounds,
+} from '../../types';
 import {
   ArraySignatureType,
   BigNumberish,
@@ -224,9 +226,9 @@ export function estimateFeeToBounds(
   }
 
   if (isRPC08_FeeEstimate(estimate)) {
-    return estimateFeeToBoundsRPC08(estimate, overhead as ResourceBoundsOverheadRPC08); // TODO: remove as
+    return estimateFeeToBoundsRPC08(estimate as any, overhead as ResourceBoundsOverheadRPC08); // TODO: remove as
   }
-  return estimateFeeToBoundsRPC07(estimate, overhead as ResourceBoundsOverheadRPC07); // TODO: remove as
+  return estimateFeeToBoundsRPC07(estimate as any, overhead as ResourceBoundsOverheadRPC07); // TODO: remove as
 }
 
 export type feeOverhead = ResourceBounds;
@@ -243,7 +245,7 @@ export function ZEROFee(specVersion: SupportedRpcVersion) {
     l2_gas_consumed: 0n,
     l2_gas_price: 0n,
     overall_fee: ZERO,
-    unit: 'FRI' as PRICE_UNIT,
+    unit: 'FRI',
     suggestedMaxFee: ZERO,
     resourceBounds: estimateFeeToBounds(ZERO, undefined, specVersion),
   };
@@ -261,9 +263,9 @@ export function ZEROFee(specVersion: SupportedRpcVersion) {
  * // result = 0
  * ```
  */
-export function intDAM(dam: EDataAvailabilityMode): EDAMode {
-  if (dam === EDataAvailabilityMode.L1) return EDAMode.L1;
-  if (dam === EDataAvailabilityMode.L2) return EDAMode.L2;
+export function intDAM(dam: EDataAvailabilityMode): number {
+  if (dam === 'L1') return 0;
+  if (dam === 'L2') return 1;
   throw Error('EDAM conversion');
 }
 
@@ -347,8 +349,8 @@ export function v3Details(details: UniversalDetails, specVersion?: SupportedRpcV
     tip: details.tip || 0,
     paymasterData: details.paymasterData || [],
     accountDeploymentData: details.accountDeploymentData || [],
-    nonceDataAvailabilityMode: details.nonceDataAvailabilityMode || EDataAvailabilityMode.L1,
-    feeDataAvailabilityMode: details.feeDataAvailabilityMode || EDataAvailabilityMode.L1,
+    nonceDataAvailabilityMode: details.nonceDataAvailabilityMode || 'L1',
+    feeDataAvailabilityMode: details.feeDataAvailabilityMode || 'L1',
     resourceBounds: details.resourceBounds ?? estimateFeeToBounds(ZERO, undefined, specVersion),
   };
 }
@@ -385,6 +387,6 @@ export function reduceV2(providedVersion: ETransactionVersion): ETransactionVers
  */
 export function getFullPublicKey(privateKey: BigNumberish): string {
   const privKey = toHex(privateKey);
-  const fullPrivKey = addHexPrefix(buf2hex(getPublicKey(privKey, false)));
+  const fullPrivKey = addHexPrefix(buf2hex(getPublicKey(privKey)));
   return fullPrivKey;
 }
