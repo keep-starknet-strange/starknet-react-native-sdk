@@ -60,7 +60,7 @@ export interface ResourceBound {
   max_price_per_unit: BigNumberish;
 }
 
-// Uint256 type for signer operations
+// Uint256 type for signer operations (used by EthSigner)
 export interface Uint256 {
   low: BigNumberish;
   high: BigNumberish;
@@ -72,8 +72,20 @@ export interface Uint256Legacy {
   members: any[];
 }
 
-// Cairo Uint256 type
+// Cairo Uint256 type for ABI operations
 export interface CairoUint256 {
+  type: 'struct';
+  members: any[];
+}
+
+// Uint512 type for signer operations
+export interface Uint512 {
+  low: BigNumberish;
+  high: BigNumberish;
+}
+
+// Legacy Uint512 type for compatibility
+export interface Uint512Legacy {
   type: 'struct';
   members: any[];
 }
@@ -175,12 +187,14 @@ export enum Uint {
   u256 = 'core::integer::u256'
 }
 
-export interface Uint256 {
+// Legacy Uint256 type for Cairo ABI operations
+export interface Uint256Legacy {
   type: 'struct';
   members: any[];
 }
 
-export interface Uint512 {
+// Legacy Uint512 type for Cairo ABI operations
+export interface Uint512Legacy {
   type: 'struct';
   members: any[];
 }
