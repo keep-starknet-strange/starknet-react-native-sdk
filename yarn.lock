@@ -2758,10 +2758,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/tsconfig@npm:3.5.2":
-  version: 3.5.2
-  resolution: "@docusaurus/tsconfig@npm:3.5.2"
-  checksum: 808a17eaf422ae9a948c6558dd1e92d4700b067ead3a63a84049c6845bf94f84e311cd0e4d517047fe9ea057efe393bb22c2d5c92d727d06c9f895e971f2c3ea
+"@docusaurus/tsconfig@npm:3.8.1":
+  version: 3.8.1
+  resolution: "@docusaurus/tsconfig@npm:3.8.1"
+  checksum: 86ebebddce95acb1b87239ffc8335f1be72d8eba43b49c3b02107cc1b1d6c4d836e49bb57b505b7601d97a2f5d6596474fbd7b458eff342a4adf05686cadadfc
   languageName: node
   linkType: hard
 
@@ -21686,7 +21686,7 @@ __metadata:
     "@docusaurus/preset-classic": 3.5.2
     "@docusaurus/theme-live-codeblock": 3.5.2
     "@docusaurus/theme-mermaid": 3.5.2
-    "@docusaurus/tsconfig": 3.5.2
+    "@docusaurus/tsconfig": 3.8.1
     "@docusaurus/types": 3.5.2
     "@mdx-js/react": ^3.0.0
     clsx: ^2.0.0
