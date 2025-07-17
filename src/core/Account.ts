@@ -194,7 +194,7 @@ export class Account implements AccountInterface {
         recovery: signature.recovery,
       };
     } catch (error) {
-      throw SdkError.unauthorized(`Message signing failed: ${error}`);
+      throw SdkError.unauthorized();
     }
   }
 
