@@ -194,4 +194,40 @@ export class RpcProvider {
   async getSyncingStats(): Promise<any> {
     return this.makeRequest('starknet_syncing');
   }
+
+  async invokeFunction(
+    invocation: any,
+    abis?: any[],
+    transactionsDetail?: any
+  ): Promise<any> {
+    return this.makeRequest('starknet_addInvokeTransaction', [invocation]);
+  }
+
+  async deployAccountContract(
+    payload: any,
+    constructorCalldata?: any[],
+    addressSalt?: string
+  ): Promise<any> {
+    return this.makeRequest('starknet_addDeployAccountTransaction', [payload]);
+  }
+
+  async waitForTransaction(txHash: string): Promise<any> {
+    const retryInterval = 5000;
+    const maxRetries = 50;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const receipt = await this.getTransactionReceipt(txHash);
+        if (receipt) {
+          return receipt;
+        }
+      } catch (error) {
+        // Transaction not found yet, continue waiting
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
+    }
+    
+    throw new Error(`Transaction ${txHash} not found after ${maxRetries} retries`);
+  }
 } 

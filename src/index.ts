@@ -22,6 +22,7 @@ import {starkCurve} from './utils/ec/starkCurve'
 import {calculateContractAddressFromHash} from './utils/hash/classHash'
 import {StarknetChainId, constants} from './global/constants'
 import {TypedData} from './types/typedData'
+import {Account} from './core/Account'
 // TO DO ADD ACCOUNT
 // Export components for compatibility with starknet package format
 export {RpcProvider}
@@ -29,6 +30,7 @@ export {starkCurve}
 export {calculateContractAddressFromHash}
 export {StarknetChainId}
 export type {TypedData}
+export {Account}
 
 // Export in the format expected by starknet package
 export {constants}
