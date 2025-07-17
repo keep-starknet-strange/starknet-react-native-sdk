@@ -180,4 +180,8 @@ export class EthSigner implements SignerInterface {
       toHex(ethSignature.recovery),
     ] as ArraySignatureType;
   }
+
+  public getPrivateKey(): string {
+    return addHexPrefix(this.pk);
+  }
 } 
