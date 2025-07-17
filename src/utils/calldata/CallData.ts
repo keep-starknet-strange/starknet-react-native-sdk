@@ -17,7 +17,7 @@ export class CallData {
    * @param cairoVersion Cairo version
    * @returns Compiled calldata
    */
-  static getExecuteCalldata(calls: Call[], cairoVersion?: CairoVersion): string[] {
+  static getExecuteCalldata(calls: Call[], _cairoVersion?: CairoVersion): string[] {
     const calldata: string[] = [];
     
     for (const call of calls) {
@@ -45,6 +45,6 @@ export class CallData {
 /**
  * Standalone function for getExecuteCalldata
  */
-export function getExecuteCalldata(calls: Call[], cairoVersion?: CairoVersion): string[] {
-  return CallData.getExecuteCalldata(calls, cairoVersion);
+export function getExecuteCalldata(calls: Call[], _cairoVersion?: CairoVersion): string[] {
+  return CallData.getExecuteCalldata(calls, _cairoVersion);
 } 

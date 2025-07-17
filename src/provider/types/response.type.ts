@@ -26,7 +26,7 @@ import {
   Simplify,
 } from './spec.type';
 
-import { TransactionReceipt } from '../../types/api';
+import { TransactionReceipt } from '../../types/provider';
 
 export type Block = Simplify<BLOCK_WITH_TX_HASHES>;
 export type PendingBlock = Simplify<PENDING_BLOCK_WITH_TX_HASHES>;

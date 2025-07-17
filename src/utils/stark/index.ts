@@ -1,12 +1,10 @@
 import { getPublicKey, getStarkKey, utils } from '@scure/starknet';
 import { gzip, ungzip } from 'pako';
 
-import { PRICE_UNIT } from '@starknet-io/starknet-types-08';
 import { config } from '../../global/config';
 import { SupportedRpcVersion, ZERO } from '../../global/constants';
 import { FeeEstimate } from '../../provider/types/index.type';
 import {
-  EDAMode,
   isRPC08_FeeEstimate,
   ResourceBoundsOverhead,
   ResourceBoundsOverheadRPC07,
@@ -211,7 +209,11 @@ export function estimatedFeeToMaxFee(
  */
 export function estimateFeeToBounds(
   estimate: FeeEstimate | 0n,
-  overhead: ResourceBoundsOverhead = config.get('feeMarginPercentage').bounds,
+  overhead: ResourceBoundsOverhead = {
+    l1_gas: { max_amount: 0, max_price_per_unit: 0 },
+    l2_gas: { max_amount: 0, max_price_per_unit: 0 },
+    l1_data_gas: { max_amount: 0, max_price_per_unit: 0 },
+  },
   specVersion?: SupportedRpcVersion
 ): ResourceBounds {
   if (isBigInt(estimate)) {

@@ -11,12 +11,12 @@ import {
   V3DeclareSignerDetails,
   V3DeployAccountSignerDetails,
   V3InvocationsSignerDetails,
+  ETransactionVersion,
   ETransactionVersion2,
-  ETransactionVersion3,
 } from '../types';
 import { CallData } from '../utils/calldata/CallData';
 import { starkCurve } from '../utils/ec/starkCurve';
-import { toHex, toBigInt } from '../utils/num';
+import { toBigInt } from '../utils/num';
 import {
   calculateDeclareTransactionHash,
   calculateDeployAccountTransactionHash,

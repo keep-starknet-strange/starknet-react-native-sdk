@@ -66,11 +66,13 @@ export class EthSigner implements SignerInterface {
     if (Object.values(ETransactionVersion2).includes(details.version as any)) {
       const det = details as V2InvocationsSignerDetails;
       msgHash = calculateInvokeTransactionHash({
-        ...det,
         senderAddress: det.walletAddress,
         calldata: compiledCalldata,
         compiledCalldata,
         version: det.version,
+        maxFee: det.maxFee,
+        chainId: det.chainId,
+        nonce: det.nonce,
       });
     } else if (Object.values(ETransactionVersion3).includes(details.version as any)) {
       const det = details as V3InvocationsSignerDetails;
