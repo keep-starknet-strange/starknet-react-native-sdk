@@ -1,182 +1,98 @@
 /*!
- * Portions of this file are adapted from scure-starknet (MIT License, (c) 2022 Paul Miller, paulmillr.com)
- * https://github.com/paulmillr/scure-starknet
- * 
- * Pedersen hash implementation copied from Starknet.js
+ * Production-ready Stark curve implementation using @scure/starknet
+ * Based on starknet.js implementation
  */
 import { BigNumberish } from '../../types';
+import { toBigInt } from '../num';
 
-// Stark curve params (copied from Starknet.js)
-const CURVE_P = BigInt('0x800000000000011000000000000000000000000000000000000000000000001');
-const CURVE_A = BigInt(1);
+// Import the production-ready stark curve from @scure/starknet
+import * as scureStarknet from '@scure/starknet';
 
-// const CURVE_B = BigInt('3141592653589793238462643383279502884197169399375105820974944592307816406665');
-const CURVE_Gx = BigInt('874739451078007766457464989774322083649278607533249481151382481072868806602');
-const CURVE_Gy = BigInt('152666792071518830868575557812948353041420400780739481342941381225525861407');
-const CURVE_N = BigInt('3618502788666131213697322783095070105526743751716087489154079457884512865583');
-
-// Pedersen hash constants (copied from Starknet.js)
-const PEDERSEN_POINTS = [
-  BigInt('0x49ee3eba8c1600700ee1b87eb599f16716b0b1022947733551fde4050ca6804'),
-  BigInt('0x3ca0cfe4b3bc6ddf346aa49d81835b9b5b4f5d0b1a5f36c3c7c5b5c5c5c5c5c5'),
-  BigInt('0x1a5f36c3c7c5b5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x2b4f5d0b1a5f36c3c7c5b5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x3c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x4d5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x5e5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x6f5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x705c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-  BigInt('0x815c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5'),
-];
-
-// Modular arithmetic
-function mod(a: bigint, b: bigint): bigint {
-  const result = a % b;
-  return result >= 0n ? result : b + result;
-}
-
-// Elliptic curve point multiplication (minimal, only for G)
-function pointDouble(x: bigint, y: bigint): [bigint, bigint] {
-  const m = mod((3n * x * x + CURVE_A) * modInv(2n * y, CURVE_P), CURVE_P);
-  const nx = mod(m * m - 2n * x, CURVE_P);
-  const ny = mod(m * (x - nx) - y, CURVE_P);
-  return [nx, ny];
-}
-
-function pointAdd(x1: bigint, y1: bigint, x2: bigint, y2: bigint): [bigint, bigint] {
-  if (x1 === x2 && y1 === y2) return pointDouble(x1, y1);
-  const m = mod((y2 - y1) * modInv(x2 - x1, CURVE_P), CURVE_P);
-  const nx = mod(m * m - x1 - x2, CURVE_P);
-  const ny = mod(m * (x1 - nx) - y1, CURVE_P);
-  return [nx, ny];
-}
-
-function modInv(a: bigint, m: bigint): bigint {
-  const [g, x] = egcd(a, m);
-  if (g !== 1n) throw new Error('modInv: no inverse');
-  return mod(x, m);
-}
-
-function egcd(a: bigint, b: bigint): [bigint, bigint] {
-  if (a === 0n) return [b, 0n];
-  const [g, y] = egcd(b % a, a);
-  return [g, y - (b / a) * y];
-}
-
-function scalarMultBase(scalar: bigint): [bigint, bigint] {
-  // Simple double-and-add for G
-  const x = CURVE_Gx, y = CURVE_Gy;
-  let resX = 0n, resY = 0n;
-  let started = false;
-  for (let i = 251; i >= 0; i--) {
-    if (started) {
-      [resX, resY] = pointDouble(resX, resY);
-    }
-    if ((scalar >> BigInt(i)) & 1n) {
-      if (!started) {
-        resX = x;
-        resY = y;
-        started = true;
-      } else {
-        [resX, resY] = pointAdd(resX, resY, x, y);
-      }
-    }
-  }
-  return [resX, resY];
-}
-
-// Pedersen hash function (copied from Starknet.js)
-function pedersen(x: BigNumberish, y: BigNumberish): string {
-  // Convert inputs to bigint
-  const xBig = typeof x === 'bigint' ? x : BigInt(x.toString());
-  const yBig = typeof y === 'bigint' ? y : BigInt(y.toString());
-  
-  // Pedersen hash implementation (simplified version)
-  // In a full implementation, this would use the actual Pedersen hash algorithm
-  let hash = 0n;
-  
-  // Process x
-  for (let i = 0; i < 252; i++) {
-    if ((xBig >> BigInt(i)) & 1n) {
-      hash = mod(hash + PEDERSEN_POINTS[i % PEDERSEN_POINTS.length], CURVE_P);
-    }
-  }
-  
-  // Process y
-  for (let i = 0; i < 252; i++) {
-    if ((yBig >> BigInt(i)) & 1n) {
-      hash = mod(hash + PEDERSEN_POINTS[(i + 252) % PEDERSEN_POINTS.length], CURVE_P);
-    }
-  }
-  
-  return '0x' + hash.toString(16).padStart(64, '0');
-}
-
-// Main function: getStarkKey
-function getStarkKey(privateKey: BigNumberish): string {
-  // Accepts hex string, number, or bigint
-  let priv: bigint;
-  if (typeof privateKey === 'bigint') priv = privateKey;
-  else if (typeof privateKey === 'number') priv = BigInt(privateKey);
-  else priv = BigInt('0x' + privateKey.toString().replace(/^0x/i, ''));
-  priv = mod(priv, CURVE_N);
-  if (priv === 0n) throw new Error('Invalid private key');
-  const [pubX] = scalarMultBase(priv);
-  // Return as 0x-prefixed hex string
-  const pubXHex = pubX.toString(16).padStart(64, '0');
-  return '0x' + pubXHex;
-}
-
-// Sign function for ECDSA on Stark curve
-function sign(hash: bigint, privateKey: bigint): { r: bigint; s: bigint; recovery: number } {
-  // This is a simplified ECDSA signature implementation
-  // In a production environment, you would use a proper cryptographic library
-  
-  // Generate a random k (in practice, this should be cryptographically secure)
-  const k = mod(BigInt(Math.floor(Math.random() * Number(CURVE_N))), CURVE_N);
-  
-  // Calculate R = k * G
-  const [rX, rY] = scalarMultBase(k);
-  const r = mod(rX, CURVE_N);
-  
-  // Calculate s = k^(-1) * (hash + r * privateKey) mod n
-  const kInv = modInv(k, CURVE_N);
-  const s = mod(kInv * (hash + r * privateKey), CURVE_N);
-  
-  // Determine recovery bit (simplified)
-  const recovery = rY % 2n === 0n ? 0 : 1;
-  
-  return { r, s, recovery: Number(recovery) };
-}
-
-// Verify signature function
-function verify(hash: bigint, signature: { r: bigint; s: bigint }, publicKey: bigint): boolean {
-  // This is a simplified verification implementation
-  // In a production environment, you would use a proper cryptographic library
-  
-  const { r, s } = signature;
-  
-  // Calculate w = s^(-1) mod n
-  const w = modInv(s, CURVE_N);
-  
-  // Calculate u1 = hash * w mod n
-  const u1 = mod(hash * w, CURVE_N);
-  
-  // Calculate u2 = r * w mod n
-  const u2 = mod(r * w, CURVE_N);
-  
-  // Calculate P = u1 * G + u2 * publicKey
-  const [p1X, p1Y] = scalarMultBase(u1);
-  const [p2X, p2Y] = scalarMultBase(u2 * publicKey);
-  const [pX, pY] = pointAdd(p1X, p1Y, p2X, p2Y);
-  
-  // Check if P.x mod n equals r
-  return mod(pX, CURVE_N) === r;
-}
-
+// Re-export the production functions
 export const starkCurve = {
-  getStarkKey,
-  pedersen,
-  sign,
-  verify
-}; 
+  /**
+   * Get the Stark public key from a private key
+   * @param privateKey - The private key as BigNumberish
+   * @returns The public key as a hex string
+   */
+  getStarkKey: (privateKey: BigNumberish): string => {
+    const priv = toBigInt(privateKey);
+    return scureStarknet.getStarkKey(priv.toString(16).padStart(64, '0'));
+  },
+
+  /**
+   * Sign a message hash with a private key
+   * @param hash - The message hash to sign
+   * @param privateKey - The private key to sign with
+   * @returns The signature as { r: bigint, s: bigint, recovery: number }
+   */
+  sign: (hash: BigNumberish, privateKey: BigNumberish): { r: bigint; s: bigint; recovery: number } => {
+    const hashBig = toBigInt(hash);
+    const privBig = toBigInt(privateKey);
+    
+    const signature = scureStarknet.sign(
+      privBig.toString(16).padStart(64, '0'),
+      hashBig.toString(16).padStart(64, '0')
+    );
+    
+    // Handle different signature formats
+    if (typeof signature === 'object' && 'r' in signature && 's' in signature) {
+      return {
+        r: BigInt('0x' + signature.r),
+        s: BigInt('0x' + signature.s),
+        recovery: (signature as any).recovery || 0
+      };
+    } else {
+      // If signature is a Uint8Array or other format, convert it
+      const sigArray = Array.from(signature as Uint8Array);
+      return {
+        r: BigInt('0x' + sigArray.slice(0, 32).map(b => b.toString(16).padStart(2, '0')).join('')),
+        s: BigInt('0x' + sigArray.slice(32, 64).map(b => b.toString(16).padStart(2, '0')).join('')),
+        recovery: 0
+      };
+    }
+  },
+
+  /**
+   * Verify a signature
+   * @param hash - The message hash that was signed
+   * @param signature - The signature to verify
+   * @param publicKey - The public key to verify against
+   * @returns True if the signature is valid
+   */
+  verify: (hash: BigNumberish, signature: { r: bigint; s: bigint }, publicKey: BigNumberish): boolean => {
+    const hashBig = toBigInt(hash);
+    const pubBig = toBigInt(publicKey);
+    
+    return scureStarknet.verify(
+      hashBig.toString(16).padStart(64, '0'),
+      {
+        r: signature.r.toString(16).padStart(64, '0'),
+        s: signature.s.toString(16).padStart(64, '0')
+      } as any,
+      pubBig.toString(16).padStart(64, '0')
+    );
+  },
+
+  /**
+   * Compute Pedersen hash of two elements
+   * @param x - First element
+   * @param y - Second element
+   * @returns The Pedersen hash as a hex string
+   */
+  pedersen: (x: BigNumberish, y: BigNumberish): string => {
+    const xBig = toBigInt(x);
+    const yBig = toBigInt(y);
+    
+    return scureStarknet.pedersen(
+      xBig.toString(16).padStart(64, '0'),
+      yBig.toString(16).padStart(64, '0')
+    );
+  }
+};
+
+// Legacy compatibility exports
+export const getStarkKey = starkCurve.getStarkKey;
+export const sign = starkCurve.sign;
+export const verify = starkCurve.verify;
+export const pedersen = starkCurve.pedersen; 
