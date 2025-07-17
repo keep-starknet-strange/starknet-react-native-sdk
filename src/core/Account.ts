@@ -313,7 +313,7 @@ export class Account implements AccountInterface {
   /**
    * Wait for transaction
    */
-  async waitForTransaction(txHash: string, options?: any): Promise<any> {
-    return this.provider.waitForTransaction(txHash, options);
+  async waitForTransaction(txHash: string): Promise<any> {
+    return this.provider.waitForTransaction(txHash);
   }
 } 
