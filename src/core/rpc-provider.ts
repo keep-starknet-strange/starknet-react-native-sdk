@@ -211,9 +211,9 @@ export class RpcProvider {
     return this.makeRequest('starknet_addDeployAccountTransaction', [payload]);
   }
 
-  async waitForTransaction(txHash: string, options?: any): Promise<any> {
-    const retryInterval = options?.retryInterval || 5000;
-    const maxRetries = options?.maxRetries || 50;
+  async waitForTransaction(txHash: string): Promise<any> {
+    const retryInterval = 5000;
+    const maxRetries = 50;
     
     for (let i = 0; i < maxRetries; i++) {
       try {
