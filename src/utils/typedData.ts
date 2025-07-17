@@ -1,8 +1,8 @@
-import { TypedData } from '../types';
+import { BigNumberish, TypedData } from '../types';
 import { starkCurve } from './ec/starkCurve';
+import { addHexPrefix, removeHexPrefix } from './encode';
+import { toHex } from './num';
 
-// Starknet message prefix for typed data
-const STARKNET_MESSAGE_PREFIX = 'StarkNet Message:';
 
 /**
  * Gets the message hash for typed data signing
