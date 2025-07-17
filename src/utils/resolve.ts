@@ -7,7 +7,6 @@ import {
   PendingBlock,
   PendingStateUpdate,
   StateUpdateResponse,
-  V3TransactionDetails,
 } from '../types';
 import { toHex } from './num';
 
