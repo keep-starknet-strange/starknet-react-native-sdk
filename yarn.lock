@@ -2805,6 +2805,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@docusaurus/types@npm:3.8.1":
+  version: 3.8.1
+  resolution: "@docusaurus/types@npm:3.8.1"
+  dependencies:
+    "@mdx-js/mdx": ^3.0.0
+    "@types/history": ^4.7.11
+    "@types/react": "*"
+    commander: ^5.1.0
+    joi: ^17.9.2
+    react-helmet-async: "npm:@slorber/react-helmet-async@1.3.0"
+    utility-types: ^3.10.0
+    webpack: ^5.95.0
+    webpack-merge: ^5.9.0
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 51ffefcf438c1d7a2bae13c5e78145c05908292726a7934a63fabc43a29972a279f963ce7da081ebbd6d62cb11de4b7084c2534fc366adf423f9857b2deeb528
+  languageName: node
+  linkType: hard
+
 "@docusaurus/utils-common@npm:3.5.2":
   version: 3.5.2
   resolution: "@docusaurus/utils-common@npm:3.5.2"
@@ -21687,7 +21707,7 @@ __metadata:
     "@docusaurus/theme-live-codeblock": 3.5.2
     "@docusaurus/theme-mermaid": 3.5.2
     "@docusaurus/tsconfig": 3.5.2
-    "@docusaurus/types": 3.5.2
+    "@docusaurus/types": 3.8.1
     "@mdx-js/react": ^3.0.0
     clsx: ^2.0.0
     prism-react-renderer: ^2.3.0
