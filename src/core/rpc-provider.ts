@@ -18,6 +18,8 @@ export interface RpcProviderOptions {
   headers?: Record<string, string>;
   retries?: number;
   timeout?: number;
+  specVersion?: string; // Added for compatibility
+  chainId?: string; // Added for compatibility
 }
 
 export class RpcProvider {
@@ -25,6 +27,8 @@ export class RpcProvider {
   private headers: Record<string, string>;
   private retries: number;
   private timeout: number;
+  private specVersion: string; // Added for compatibility
+  private chainId: string; // Added for compatibility
 
   constructor(options: RpcProviderOptions) {
     this.nodeUrl = options.nodeUrl;
@@ -35,6 +39,8 @@ export class RpcProvider {
     };
     this.retries = options.retries || 3;
     this.timeout = options.timeout || 30000;
+    this.specVersion = options.specVersion || '0.7'; // Default to 0.7
+    this.chainId = options.chainId || ''; // Store chainId for compatibility
   }
 
   private async makeRequest(method: string, params: any[] = []): Promise<any> {
