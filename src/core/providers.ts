@@ -26,7 +26,7 @@ const NETWORK_CONFIGS: Record<StarknetNetwork, NetworkConfig> = {
   [StarknetNetwork.TESTNET]: {
     chainId: '0x534e5f5345504f4c4941',
     networkName: 'Starknet Testnet',
-    rpcUrl: 'https://alpha-sepolia.starknet.io',
+    rpcUrl: 'https://starknet-sepolia.drpc.org',
     explorerUrl: 'https://sepolia.starkscan.co'
   },
   [StarknetNetwork.DEVNET]: {
