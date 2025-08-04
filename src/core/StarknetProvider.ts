@@ -186,7 +186,13 @@ export class StarknetProvider {
   }
 
   async getClassAt(blockId: string | number, contractAddress: string) {
-    return this.provider.getClassAt(blockId, contractAddress);
+    const result = await this.provider.getClassAt(blockId, contractAddress);
+    return {
+      ...result,
+      _type: 'ContractClass',
+      _blockId: blockId,
+      _contractAddress: contractAddress
+    };
   }
 
   async getClassHashAt(blockId: string | number, contractAddress: string) {
@@ -194,7 +200,13 @@ export class StarknetProvider {
   }
 
   async getClass(blockId: string, classHash: string) {
-    return this.provider.getClass(blockId, classHash);
+    const result = await this.provider.getClass(blockId, classHash);
+    return {
+      ...result,
+      _type: 'ContractClass',
+      _blockId: blockId,
+      _classHash: classHash
+    };
   }
 
   async getEvents(filter: EventFilter) {
@@ -208,7 +220,13 @@ export class StarknetProvider {
   }
 
   async callContract(request: any, blockId: string | number) {
-    return this.provider.callContract(request, blockId);
+    // Format the request to match RPC expectations
+    const formattedRequest = {
+      contract_address: request.contractAddress,
+      entry_point_selector: request.entrypoint,
+      calldata: request.calldata || []
+    };
+    return this.provider.callContract(formattedRequest as any, blockId);
   }
 
   async getEstimateFee(tx: Invocation, _blockId: string | number) {
@@ -219,5 +237,86 @@ export class StarknetProvider {
 
   async estimateMessageFee(message: any, blockId: string | number) {
     return this.provider.estimateMessageFee(message, blockId);
+  }
+
+  // Additional methods exposed from RpcProvider
+  async getTransactionByBlockIdAndIndex(blockId: string | number, index: number) {
+    return this.provider.getTransactionByBlockIdAndIndex(blockId, index);
+  }
+
+  async getBlockTransactionCount(blockId: string | number = 'latest'): Promise<number> {
+    return this.provider.getBlockTransactionCount(blockId);
+  }
+
+  async getSyncingStats(): Promise<any> {
+    return this.provider.getSyncingStats();
+  }
+
+  async getNonceForAddress(contractAddress: string, blockId: string | number = 'latest'): Promise<string> {
+    return this.provider.getNonceForAddress(contractAddress, blockId);
+  }
+
+  async getBlockWithReceipts(blockId: string | number = 'latest'): Promise<any> {
+    return this.provider.getBlockWithReceipts(blockId);
+  }
+
+  async getBlockHashAndNumber(): Promise<any> {
+    // Implement getBlockHashAndNumber manually since it's not in RpcProvider
+    const payload = {
+      jsonrpc: '2.0',
+      id: Date.now(),
+      method: 'starknet_blockHashAndNumber',
+      params: [],
+    };
+
+    const response = await fetch(this.provider.nodeUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (result.error) {
+      throw new Error(`RPC error: ${result.error.message || result.error}`);
+    }
+
+    return result.result;
+  }
+
+  async getSpecVersion(): Promise<string> {
+    // Use a direct RPC call since specVersion is not exposed in RpcProvider
+    const payload = {
+      jsonrpc: '2.0',
+      id: Date.now(),
+      method: 'starknet_specVersion',
+      params: [],
+    };
+
+    const response = await fetch(this.provider.nodeUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (result.error) {
+      throw new Error(`RPC error: ${result.error.message || result.error}`);
+    }
+
+    return result.result;
   }
 } 
