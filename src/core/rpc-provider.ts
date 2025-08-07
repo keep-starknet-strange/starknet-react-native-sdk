@@ -39,7 +39,7 @@ export class RpcProvider {
     };
     this.retries = options.retries || 3;
     this.timeout = options.timeout || 30000;
-    this.specVersion = options.specVersion || '0.7'; // Default to 0.7
+    this.specVersion = options.specVersion || '0.8.1'; // Updated to 0.8.1
     this.chainId = options.chainId || ''; // Store chainId for compatibility
   }
 
@@ -144,7 +144,13 @@ export class RpcProvider {
   }
 
   async callContract(request: Call, blockId: string | number = 'latest'): Promise<any> {
-    return this.makeRequest('starknet_call', [request, blockId]);
+    // Convert camelCase to snake_case for RPC call
+    const rpcRequest = {
+      contract_address: request.contractAddress,
+      entry_point_selector: request.entrypoint,
+      calldata: request.calldata
+    };
+    return this.makeRequest('starknet_call', [rpcRequest, blockId]);
   }
 
   async getEstimateFee(
@@ -190,7 +196,7 @@ export class RpcProvider {
     contractAddress: string,
     blockId: string | number = 'latest'
   ): Promise<string> {
-    return this.makeRequest('starknet_getNonce', [contractAddress, blockId]);
+    return this.makeRequest('starknet_getNonce', [blockId, contractAddress]);
   }
 
   async getL1GasPrice(blockId: string | number = 'latest'): Promise<any> {
